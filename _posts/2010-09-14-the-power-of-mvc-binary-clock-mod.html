@@ -1,9 +1,0 @@
----
-layout: post
-title: ! 'The Power of MVC: Binary Clock mod'
-published: true
----
-<p>When I created my digital clock, one of the things I wanted to show was how OOCSS and MVC could be used to provide a clean, clear separation of concerns between the View, i.e. HTML and CSS, and the View Controller, i.e. Javascript.  Along those lines, I had always intended for it to be possible to slap a different View onto the clock with no mods to the View Controller, but the proof is in the pudding, right?</p>
-<p>Along came Daniel Lamb, who put that to the test, and created his spiffy&nbsp;<a href="http://daniellmb.com/binary-clock.htm">binary clock mod</a>.</p>
-<p>He created a slightly modified View structure for the binary clock display in his HTML, and then cleverly applied OOCSS principles to inherit from my original OOCSS.  Most interestingly, though, notice that he didn&rsquo;t change a single line of code in the JS View Controller.  In fact, he <em>referenced my JS View Controller directly in his script tag</em>.  Because CSS classes are used as a message passing mechanism, and his View responds to the same messages, the binary clock works perfectly.</p>
-<p>I'd like to thank&nbsp;<a href="http://twitter.com/daniellmb">Daniel</a> for creating such a cool mod and perfectly illustrating the powerful separation of concerns that OOCSS and MVC can provide.</p>
