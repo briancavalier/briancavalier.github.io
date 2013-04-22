@@ -1,0 +1,14 @@
+---
+layout: post
+title: Simple OOCSS Slideshows
+published: true
+---
+<p>I read <a href="http://www.computedstyle.com/2010/12/hiring-front-end-engineers.html" title="computed style: Hiring Front-End Engineers">this article</a> recently, and decided to solve the problem the author proposes in point #3 using OOCSS techniques.</p>
+
+<p>Here you go: <a href="http://dl.dropbox.com/u/259524/code/slideshow/index.html" title="OOCSS Slideshows">OOCSS Slideshows</a>.</p>
+
+<p>You might be saying, &ldquo;Good grief, all that CSS is overkill!&rdquo;, and be tempted to think that just using <code>image.style.display = 'none'</code> is good enough.  Try implementing those 3 effects in plain Javascript &hellip; you probably wouldn&rsquo;t get it right&mdash;I know I probably wouldn&rsquo;t.</p>
+
+<p>Or maybe you&rsquo;re thinking that you&rsquo;d just use jQuery, Dojo, or your favorite effects library to do it.  Putting aside the fact that the original interview question stipulated no libraries, the advantage of an OOCSS approach, as I&rsquo;ve <a href="http://blog.briancavalier.com/the-oo-in-oocss-and-direct-style-manipulation-0" title="The OO in OOCSS, and direct style manipulation - technorthodox">written about at length before</a>, is separation of concerns, and all its related benefits.</p>
+
+<p>Using an MVC and OOCSS approach <em>puts control of the slideshow transitions into the hands of the designer, and changes to the transitions require zero Javascript changes</em>.</p>

@@ -1,0 +1,62 @@
+---
+layout: post
+title: ! 'OOCSS Antipatterns: Analog clock theme using only CSS'
+published: true
+---
+<p>You asked for it, and you got it.  Several people asked me after the digital clock demo at jQCon if I thought it was possible to create an analog theme for the clock using only CSS.  I had wondered this as well, but came to the conclusion that it was impossible, given the current HTML structure.  So, that&rsquo;s the answer I gave at the conference.</p>
+
+<p>The very next day, I thought of a way to do it, so <a href="http://briancavalier.com/digital-clock/analog">here&rsquo;s an analog theme</a> (<a href="http://github.com/briancavalier/Sample-Code/tree/analog/digital-clock" title="digital-clock at analog from briancavalier's Sample-Code - GitHub">source on github</a>) for the digital clock done entirely in CSS.</p>
+
+<p><script src="https://gist.github.com/645340.js"></script></p>
+
+<p>First, note a couple things:</p>
+
+<ol>
+<li>The first hour, minute, and second digits are hidden.</li>
+<li>The second hour, minute, and second digits have been styled to look like analog clock hands&mdash;i.e. long thin rectangles, and have been anchored at the center of the analog clock face.</li>
+</ol>
+
+
+<p>The key is the use (in fact, <em>abuse</em>, read on!) of the immediate sibling selector to rotate the clock hands to the correct position, using CSS3 transforms.  For example, the line above says when the first hour digit is a &ldquo;0&rdquo;, and the second hour digit is also a &ldquo;1&rdquo; rotate the second digit (remember, it&rsquo;s been styled to look like an analog clock hand) by 30°.  Each hour represents 30° (360 / 12 = 30), so looking at the rest of the hour selectors, you can see how it works.</p>
+
+<p>Similarly, the minutes and seconds are rotated using the immediate sibling selector.  The only difference is the degrees, since 360 / 60 = 6° per minute/second.</p>
+
+<p>Ok, neat, it works, but &hellip;</p>
+
+<h2>How <em>not</em> to build an analog clock</h2>
+
+<p>At this point, you&rsquo;re probably saying to yourself (and if you&rsquo;re not, <em>you should be</em>) &ldquo;This is a terrible way to build an analog clock&rdquo;.  You are absolutely right.  There are many problems with this, and I&rsquo;d even go so far as to call the whole thing an <a href="http://en.wikipedia.org/wiki/Anti-pattern" title="Anti-pattern - Wikipedia, the free encyclopedia">antipattern</a>.</p>
+
+<p>From the HTML element hierarchy, to the CSS classnames, to the time computations, most everything tailored to represent an LED-based digital clock.</p>
+
+<p>However, the point of this little exercise was not to find the best way to engineer an analog clock.  The point was to answer the question &ldquo;could it be done?&rdquo;.  But maybe we can learn something about OOCSS anyway.</p>
+
+<h2>There is something to be learned here</h2>
+
+<p>As the saying goes, &ldquo;when all you have is a hammer, everything looks like a nail&rdquo;, and in this case of trying to use <em>only</em> OOCSS to transform the digital clock into analog, there&rsquo;s certainly some overly-ambitious hammering going on.</p>
+
+<p>If the HTML is poorly-suited to the task at hand, trying to apply OOCSS on top of it will probably just make things worse.  In fact, in this example, the HTML and CSS are fighting each other rather than working together.</p>
+
+<p>OOCSS is not just about CSS, it&rsquo;s about <em>identifying objects in the view first</em> (<a href="http://slidesha.re/oocss-jqcon-slides" title="OOCSS for JavaScript Pirates jQCon Boston">as John said in our presentation, &ldquo;ignore the HTML!&rdquo;</a>), and then structuring HTML and CSS around the containers, content, identity, and states of those objects.</p>
+
+<p>The fact is that the objects in this clock are LED digits, not analog clock hands, and some mildly clever CSS doesn&rsquo;t change that.  Conversely, this bastardization means that the hands of the analog clock have the classes &ldquo;display-area&rdquo; and &ldquo;digit&rdquo;, as well as &ldquo;d0&rdquo; &ndash; &ldquo;d9&rdquo;, none of which seem like logical choices for the hands of an analog clock!</p>
+
+<p><strong>Antipattern</strong>: In any reasonably complex system, writing HTML and CSS first is an antipattern.</p>
+
+<p><strong>What to do?</strong>: Break out the wireframes, gather around the whiteboard, and start identifying objects!  List their states.  Talk about ways to translate them into well-structured HTML containers and content.</p>
+
+<p>One of the results of this object/HTML/CSS mismatch is <em>state explosion</em>, aka <a href="http://en.wikipedia.org/wiki/Combinatorial_explosion" title="Combinatorial explosion - Wikipedia, the free encyclopedia">combinatorial explosion</a>.  There are 72 CSS rules needed just to rotate the clock hands, whereas there are only 10 rules for the original digital clock LED digits.  That certainly qualifies as state explosion, and just looking at the analog rules should give you an uneasy feeling that something is wrong.</p>
+
+<p>In fact, modeling any analog clock, not just this bad example of an analog clock, as discrete OOCSS states seems wrong.  Consider also the progress bar example John gave during our talk.  Progress bars, in most cases, represent a continuous function rather than a discrete function, and therefore can require an infinite number of states to model their possible values&mdash;e.g. 30%, 30.1%, 30.15%, and so on.</p>
+
+<p><strong>Antipattern</strong>: Trying to model continuous values with OOCSS state is an antipattern.</p>
+
+<p><strong>What to do?</strong>: Use a mechanism better suited to continuous values/functions, such as a vector library, or yes, even direct (but well abstracted!) style manipulation.</p>
+
+<p>One other thing that should be bothering you about this analog clock is that nearly half the HTML elements are <em>permanently hidden</em> by the analog theme&rsquo;s CSS.  This can be an indication that you&rsquo;ve misidentified the view objects.  In this case, I think it&rsquo;s pretty obvious that the objects I originally identified when creating the digital clock, that is, active digits composed of lit or unlit LED bars, simply are not present in the analog clock.</p>
+
+<p><strong>Antipattern</strong>: Having sections of permanently hidden HTML is an antipattern.</p>
+
+<p><strong>What to do?</strong>: Review your objects and wireframes.  You may have misidentified some objects, or your application may have changed significantly enough over time that the objects you had originally, and correctly, identified are no longer present.  Either way, it&rsquo;s time to revisit the wireframes and refactor.</p>
+
+<p>Trying to shoehorn an analog display into the digital clock was fun, but more importantly, I think it helped to identify some OOCSS antipatterns.  Hopefully these will help us all avoid some pitfalls!</p>

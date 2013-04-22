@@ -1,0 +1,16 @@
+---
+layout: post
+title: Extending dojo's NodeList and dojo.query
+published: true
+---
+<p>Recently, on one of my projects, I needed to rotate classes on a DOM node.  Given a set of classes, say "A", "B", and "C", I wanted to be able to have a DOM node with class "A", poke it and then have it have "B", then "C", then "A" again, and so on, and I didn't want to keep any additional state beyond the node itself.  So, given a node, I wanted it to simply go to the next class and wrap back around ... i.e. just do the right thing.</p>
+<p>And, as is natural in the world of DOM, I wanted to be able to do that on a whole set of nodes.</p>
+<p>There are lots of ways this could be useful.  As one very simple example, it can be used to toggle a bunch of nodes between two classes, to show or hide them using classes rather than specifically setting their display.  Why not just set their display, you ask?  One reason is CSS3 transitions, which are based on class (and pseudo-class) changes.  So, it's possible to have hardware accelerated, animated show/hide via CSS3 transitions which degrade nicely to simple, instantaneous show/hide on browsers that don't support transitions.</p>
+<p>Then, of course, using more than 2 classes allows for lots of interesting behavior.</p>
+<h3>A quick aside</h3>
+<p>In my opinion, any good framework should provide, in addition to useful functionality and a clean API, a clear and well-defined way to extend the framework itself.  This is one of the reasons I am a big fan of <a href="http://dojotoolkit.com/">dojo</a>.  Don't get me wrong, there are lots of great Javascript frameworks, but in my experience, this is one area where dojo has done an especially nice job.  Their widget infrastructure is a prime example.  The widgets have a well-defined inheritance structure and lifecycle which together make it darn easy to write your own.</p>
+<h3>Back to the task at hand</h3>
+<p>Using <code>dojo.extend</code>, It was easy to whip up an extension to dojo's <code>NodeList</code>, and thus dojo.query to accomplish what I needed.  With this, you can do things like:</p>
+<p><script src="https://gist.github.com/475957.js"></script></p>
+<p>Here is my <code>NodeList.rotateClass</code> extension for your enjoyment or criticism.  It's certainly not perfect, but it gets the job done.  If you have any suggestions for improving it, drop me a comment or twitter, as I'd love to hear them.</p>
+<p><script src="https://gist.github.com/468015.js"></script></p>

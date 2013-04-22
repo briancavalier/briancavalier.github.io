@@ -1,0 +1,33 @@
+---
+layout: post
+title: A Java + Iterate solution to Project Euler Problem 6
+published: true
+---
+<p>A friend of mine <a href="http://j.mp/5rjnHE">posted his Groovy solution</a> to <a href="http://projecteuler.net/index.php?section=problems&amp;id=6" title="Project Euler">Project Euler Problem #6</a>, so I figured I'd post a Java solution.  Here it is using <a href="http://github.com/briancavalier/iterate" title="briancavalier's iterate at master - GitHub">Iterate</a> (note that the second parameter of <code>range()</code> is the <em>exclusive</em> upper bound):</p>
+<p><code>
+<div class="CodeRay">
+  <div class="code"><pre>square().apply(each(range(1, 101)).reduce(sum())) - each(range(1, 101)).map(square()).reduce(sum());</pre></div>
+</div>
+
+</code></p>
+<p>And a nicer version using an upcoming release of Iterate:</p>
+<p><code>
+<div class="CodeRay">
+  <div class="code"><pre>square().apply(range(1, 101).reduce(sum())) - range(1, 101).map(square()).reduce(sum());</pre></div>
+</div>
+
+</code></p>
+<p>And here's a straight Java version for comparison:</p>
+<p><code>
+<div class="CodeRay">
+  <div class="code"><pre>int sum = 0;
+int sumOfSquares = 0;
+for(int i=1; i&lt;=100; i++) {
+    sum += i;
+    sumOfSquares += i * i;
+}
+
+int answer = (sum * sum) - sumOfSquares;</pre></div>
+</div>
+
+</code></p>
