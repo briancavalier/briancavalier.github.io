@@ -1,0 +1,237 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Font-based digital clock theme using only CSS - technorthodox</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="Ever since Daniel posted his binary mod of my digital clock, I&rsquo;ve been thinking about other ways to push the limits of the clock using only CSS &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://briancavalier.github.io/font-based-digital-clock-theme-using-only-css">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="technorthodox" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">technorthodox</a></h1>
+  
+    <h2>A bunch of stuff that doesn't go together</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:briancavalier.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Font-based Digital Clock Theme Using Only CSS</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-22T00:00:00-04:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Ever since Daniel posted his <a href="http://daniellmb.com/binary-clock.htm" title="MVC OOCSS Binary Clock">binary mod</a> of my digital clock, I&rsquo;ve been thinking about other ways to push the limits of the clock using only CSS.  At <a href="http://blog.briancavalier.com/oocss-for-javascript-pirates-at-jqcon-2010" title="OOCSS for Javascript Pirates at JQCon 2010 - technorthodox">JQCon</a>, I also talked to a few folks between sessions who had wondered the same thing.  So, I&rsquo;ve decided to give it a go.</p>
+
+<p>One of the first ideas I had was to try to use fonts instead of the LED divs to show the clock digits.  So, <a href="http://briancavalier.com/digital-clock/" title="CSS3 Digital Clock">here you go</a>.</p>
+
+<p>It turned out to be fairly easy, and required <em>zero changes</em> to the Javascript view controller.  The view controller simply passes the same messages to the view as it did before.  In other words, the view controller relies on a message-passing-based view API to which the OOCSS responds.  That API is unchanged in this version.  To verify, you can hop on over to Daniel&rsquo;s <a href="http://daniellmb.com/binary-clock.htm" title="MVC OOCSS Binary Clock">binary mod</a>, which references my JS directly, and see that it still works.</p>
+
+<p>It also required only superficial changes to the HTML:</p>
+
+<ol>
+<li>I added the button for the new theme in the row of theme buttons.</li>
+<li>I added &ldquo;hour&rdquo; and &ldquo;minute&rdquo; classes to the digits representing hours and minutes.  This change was not necessary to support the new font-based theme, but makes the hours and minutes consistent with the seconds, which already had the class &ldquo;second&rdquo;.</li>
+</ol>
+
+
+<p>The key changes were, of course, in the CSS, and here are some of the most relevant bits.</p>
+
+<p><script src="https://gist.github.com/640955.js"></script></p>
+
+<p>The comments pretty much say it all, but basically it hides the LEDs and then uses :before content to inject the font-based digits.</p>
+
+<p>One thing I hadn&rsquo;t thought about before I actually ran it the first time, was that the &ldquo;1&rdquo; digit is much thinner than all the others, so I had to forcibly set a specific width for it (in both hours/minutes and the smaller seconds).  Without that specialization, the clock looks too sparse when there is a &ldquo;1&rdquo; (or several &ldquo;1&#8221;s) being displayed.  Yet another win for the OOCSS base and specialization pattern.</p>
+
+<p>I think this theme looks pretty good (although I&rsquo;m still partial to the LEDs), but if you have suggestions for how to tweak it, I&rsquo;d love to hear them.  Also, if you have an idea for how to push the envelope, feel free to leave a comment, or <a href="http://twitter.com/briancavalier" title="@briancavalier">tweet it up</a>!</p>
+
+<p>Stay tuned for more envelope pushing &hellip;</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-22T00:00:00-04:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2010</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://briancavalier.github.io/font-based-digital-clock-theme-using-only-css/" data-via="" data-counturl="http://briancavalier.github.io/font-based-digital-clock-theme-using-only-css/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/oocss-for-javascript-pirates-at-jqcon-2010/" title="Previous Post: OOCSS for Javascript Pirates at JQCon 2010">&laquo; OOCSS for Javascript Pirates at JQCon 2010</a>
+      
+      
+        <a class="basic-alignment right" href="/oocss-antipatterns-analog-clock-theme-using-only-css/" title="Next Post: OOCSS Antipatterns: Analog clock theme using only CSS">OOCSS Antipatterns: Analog clock theme using only CSS &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/async-programming-part-2-promises/">Async Programming Part 2: Promises</a>
+      </li>
+    
+      <li class="post">
+        <a href="/async-programming-part-1-it-s-messy/">Async Programming Part 1: It's Messy</a>
+      </li>
+    
+      <li class="post">
+        <a href="/oocss-slides-and-more-from-the-jquery-pgh-meetup/">OOCSS slides and more from the jQuery Pgh meetup</a>
+      </li>
+    
+      <li class="post">
+        <a href="/oocss-at-the-next-jquery-pgh-meetup/">OOCSS at the next jQuery Pgh meetup</a>
+      </li>
+    
+      <li class="post">
+        <a href="/simple-oocss-slideshows/">Simple OOCSS Slideshows</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

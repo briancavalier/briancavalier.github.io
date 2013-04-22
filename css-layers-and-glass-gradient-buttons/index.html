@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>CSS layers and glass/gradient buttons - technorthodox</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="I threw together a set of image-less glass and gradients buttons last night.  They use a flat color behind a partially-transparent CSS3 gradient to &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://briancavalier.github.io/css-layers-and-glass-gradient-buttons">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="technorthodox" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">technorthodox</a></h1>
+  
+    <h2>A bunch of stuff that doesn't go together</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:briancavalier.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">CSS Layers and Glass/gradient Buttons</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-01T00:00:00-04:00" pubdate data-updated="true">Jul 1<span>st</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I threw together a set of <a href="http://bit.ly/aRFqpJ" title="Using CSS in layers to create glass and gradients">image-less glass and gradients buttons</a> last night.  They use a flat color behind a partially-transparent CSS3 gradient to create an overall glass or gradient effect.  The nice thing about it is that the gradient style can vary independent of the color, and you don&#8217;t have to play with a color selector or do color math to get the gradients to look nice.  You can simply setup one gradient and then you can change the flat color to suit what you need.</p>
+
+<p>One obvious problem is that it won&#8217;t work in browsers that don&#8217;t support CSS gradients, and in browsers that do support gradients, but don&#8217;t support color stops, such as IE8, you can&#8217;t do the glass effect using this techique.</p>
+<p>Another problem I found is with Firefox, and presumably any browser that uses gecko.  When using a border-radius on the outer button element, it doesn&#8217;t fully extend the inner element to the edges of the button, so you get a nasty flat colored &#8220;border&#8221; (not actually a CSS border).  Take a look in Firefox to see what I mean.  It&#8217;s a shame, because the technique works very well in WebKit.</p>
+<p>Anyway, check it out <a href="http://bit.ly/aRFqpJ" title="Using CSS in layers to create glass and gradients">here</a>.</p>
+<p>
+</p><p><strong>Update (7/2/2010): </strong>I added a hack to &#8220;remove&#8221; the nasty borders in Firefox by introducing a negative margin on the inner gradient overlay.  It stretches the overlay out to the edges of the button.  It works, but I really don&#8217;t like it at all.  I hope Firefox fixes their gradient rendering with border-radius to work &#8220;correctly&#8221;&#8211;or rather, what I feel is correct &#8230; like WebKit does it.</p>
+<p>On a related note, Safari on the iPhone in iOS4 also renders the gradient overlays incorrectly.  It leaves large gaps on the left and right.  So, there&#8217;s something different about that version of WebKit as well.</p>
+<p>I also added IE gradients, which don&#8217;t support color stops, so all the buttons will all appear to be straight two-color gradients.  They still look decent, but not nearly as snazzy as in WebKit and FF.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-01T00:00:00-04:00" pubdate data-updated="true">Jul 1<span>st</span>, 2010</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://briancavalier.github.io/css-layers-and-glass-gradient-buttons/" data-via="" data-counturl="http://briancavalier.github.io/css-layers-and-glass-gradient-buttons/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/new-dinnerware/" title="Previous Post: New dinnerware">&laquo; New dinnerware</a>
+      
+      
+        <a class="basic-alignment right" href="/motion-spotlight-installed-at-the-pool/" title="Next Post: Motion spotlight installed at the pool">Motion spotlight installed at the pool &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/async-programming-part-2-promises/">Async Programming Part 2: Promises</a>
+      </li>
+    
+      <li class="post">
+        <a href="/async-programming-part-1-it-s-messy/">Async Programming Part 1: It's Messy</a>
+      </li>
+    
+      <li class="post">
+        <a href="/oocss-slides-and-more-from-the-jquery-pgh-meetup/">OOCSS slides and more from the jQuery Pgh meetup</a>
+      </li>
+    
+      <li class="post">
+        <a href="/oocss-at-the-next-jquery-pgh-meetup/">OOCSS at the next jQuery Pgh meetup</a>
+      </li>
+    
+      <li class="post">
+        <a href="/simple-oocss-slideshows/">Simple OOCSS Slideshows</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

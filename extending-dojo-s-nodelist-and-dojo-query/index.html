@@ -1,0 +1,223 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Extending dojo's NodeList and dojo.query - technorthodox</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="Recently, on one of my projects, I needed to rotate classes on a DOM node.  Given a set of classes, say &#8220;A&#8221;, &#8220;B&#8221;, and &#8220; &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://briancavalier.github.io/extending-dojo-s-nodelist-and-dojo-query">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="technorthodox" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">technorthodox</a></h1>
+  
+    <h2>A bunch of stuff that doesn't go together</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:briancavalier.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Extending Dojo's NodeList and dojo.query</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-14T00:00:00-04:00" pubdate data-updated="true">Jul 14<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Recently, on one of my projects, I needed to rotate classes on a DOM node.  Given a set of classes, say &#8220;A&#8221;, &#8220;B&#8221;, and &#8220;C&#8221;, I wanted to be able to have a DOM node with class &#8220;A&#8221;, poke it and then have it have &#8220;B&#8221;, then &#8220;C&#8221;, then &#8220;A&#8221; again, and so on, and I didn&#8217;t want to keep any additional state beyond the node itself.  So, given a node, I wanted it to simply go to the next class and wrap back around &#8230; i.e. just do the right thing.</p>
+<p>And, as is natural in the world of DOM, I wanted to be able to do that on a whole set of nodes.</p>
+<p>There are lots of ways this could be useful.  As one very simple example, it can be used to toggle a bunch of nodes between two classes, to show or hide them using classes rather than specifically setting their display.  Why not just set their display, you ask?  One reason is CSS3 transitions, which are based on class (and pseudo-class) changes.  So, it&#8217;s possible to have hardware accelerated, animated show/hide via CSS3 transitions which degrade nicely to simple, instantaneous show/hide on browsers that don&#8217;t support transitions.</p>
+<p>Then, of course, using more than 2 classes allows for lots of interesting behavior.</p>
+<h3>A quick aside</h3>
+<p>In my opinion, any good framework should provide, in addition to useful functionality and a clean API, a clear and well-defined way to extend the framework itself.  This is one of the reasons I am a big fan of <a href="http://dojotoolkit.com/">dojo</a>.  Don&#8217;t get me wrong, there are lots of great Javascript frameworks, but in my experience, this is one area where dojo has done an especially nice job.  Their widget infrastructure is a prime example.  The widgets have a well-defined inheritance structure and lifecycle which together make it darn easy to write your own.</p>
+<h3>Back to the task at hand</h3>
+<p>Using <code>dojo.extend</code>, It was easy to whip up an extension to dojo&#8217;s <code>NodeList</code>, and thus dojo.query to accomplish what I needed.  With this, you can do things like:</p>
+<p><script src="https://gist.github.com/475957.js"></script></p>
+<p>Here is my <code>NodeList.rotateClass</code> extension for your enjoyment or criticism.  It&#8217;s certainly not perfect, but it gets the job done.  If you have any suggestions for improving it, drop me a comment or twitter, as I&#8217;d love to hear them.</p>
+<p><script src="https://gist.github.com/468015.js"></script></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-14T00:00:00-04:00" pubdate data-updated="true">Jul 14<span>th</span>, 2010</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://briancavalier.github.io/extending-dojo-s-nodelist-and-dojo-query/" data-via="" data-counturl="http://briancavalier.github.io/extending-dojo-s-nodelist-and-dojo-query/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/hobnob-shiraz/" title="Previous Post: Hobnob Shiraz">&laquo; Hobnob Shiraz</a>
+      
+      
+        <a class="basic-alignment right" href="/css3-digital-clock/" title="Next Post: CSS3 Digital Clock">CSS3 Digital Clock &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/async-programming-part-2-promises/">Async Programming Part 2: Promises</a>
+      </li>
+    
+      <li class="post">
+        <a href="/async-programming-part-1-it-s-messy/">Async Programming Part 1: It's Messy</a>
+      </li>
+    
+      <li class="post">
+        <a href="/oocss-slides-and-more-from-the-jquery-pgh-meetup/">OOCSS slides and more from the jQuery Pgh meetup</a>
+      </li>
+    
+      <li class="post">
+        <a href="/oocss-at-the-next-jquery-pgh-meetup/">OOCSS at the next jQuery Pgh meetup</a>
+      </li>
+    
+      <li class="post">
+        <a href="/simple-oocss-slideshows/">Simple OOCSS Slideshows</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

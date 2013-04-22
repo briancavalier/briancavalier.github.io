@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Should scrollbars go away? - technorthodox</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="I think that scrollbars as we know them should go away. The current scrollbar paradigm takes up space unnecessarily and adds to visual clutter when &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://briancavalier.github.io/should-scrollbars-go-away-">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="technorthodox" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">technorthodox</a></h1>
+  
+    <h2>A bunch of stuff that doesn't go together</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:briancavalier.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Should Scrollbars Go Away?</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-01-31T00:00:00-05:00" pubdate data-updated="true">Jan 31<span>st</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I think that scrollbars <em>as we know them</em> should go away.  The current scrollbar paradigm takes up space unnecessarily and adds to visual clutter when it&rsquo;s not needed.  We can do better.</p>
+<p>Scrolling is good.  Humans are good at spatial relationships, and scrolling provides a simple spatial relationship that most everyone understands.  It also has a strong analog to the physical world.  When some object is obscured, you can move it and see more of it.  What we need are better affordances.</p>
+<p>Scrollbars typically provide two functions.  First, they communicate information about what part of a document you are viewing.  They tell you how far down or across in the document you are, and proportional scrollbars also communicate (in a more subtle way) the relative size of the document, as well as how much of the document you can see given the current viewport size.</p>
+<p>Second, the allow the user to navigate a document via scrolling, typically via 3 interactions: 1) Dragging the scrollbar, 2) Clicking in the scroll well, 3) Clicking up and down arrows typically found at the top and/or bottom of the scroll well.</p>
+<p>Since most every mouse, trackball, or other input devices has some form of vertical scrolling control (usually in the form of a scroll wheel), and several now incorporate a horizontal scrolling control as well (e.g. mice with tilt wheels, mini-scroll balls, and even Apple&rsquo;s new gesture-based Magic Mouse), I would bet that most people don&rsquo;t use any of the three interactions above nearly as much as their scroll wheel (or whatever their input device provides).  If the ability to scroll by interacting directly with a scrollbar went away, I&rsquo;ll bet that after a week, most people would not miss it.</p>
+<p>On touch screen devices, there is basically no need to directly interact with a scrollbar at all.  I think that&rsquo;s been proven by the success of the current generation of devices.  I don&#8217;t hear anyone complaining about the lack of up/down scrollbar arrows on the iPhone.</p>
+<p>Speaking of the iPhone, it&rsquo;s not perfect, but I think the iPhone&rsquo;s scroll pill is a step in the right direction.  It&rsquo;s not there unless you need it&mdash;when you are scrolling&mdash;and it still communicates the intended information clearly.  Granted, it is sometimes useful to know where in a long page you are without having to scroll (note: all you have to do is touch the screen, and the pill appears to let you know where you are), but most of the time, all you really want to know is <em>whether there is more to see or not</em>.</p>
+<p>Many times, &ldquo;whether there is more to see&rdquo; is communicated implicitly, but quite intuitively, by the part of the document that is visible in the viewport.  For example, when the bottom line of text or an image on a page is only half-visible, or when the fully-visible bottom line of text doesn&rsquo;t end with a period.  In those cases, the position of the information itself within the visible area communicates everything you need to know.</p>
+<p>For cases where the visible page doesn&rsquo;t provide enough of a hint, some other affordance could be used, such as a small transparent overlay at the bottom of the visible area, or in a corner, or even some sort of subtle fading of the bottom line of text such that it is still readable, but indicates there is more to see if you scroll.</p>
+<p>Given the direction of the current generation of touchscreen device interaction models, I&rsquo;m betting the scrollbar&rsquo;s days are numbered, and I, for one, think it should go sooner rather than later, even on desktop operating systems.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-01-31T00:00:00-05:00" pubdate data-updated="true">Jan 31<span>st</span>, 2010</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://briancavalier.github.io/should-scrollbars-go-away-/" data-via="" data-counturl="http://briancavalier.github.io/should-scrollbars-go-away-/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/let-the-adventure-begin/" title="Previous Post: Let the adventure begin">&laquo; Let the adventure begin</a>
+      
+      
+        <a class="basic-alignment right" href="/woohoo-just-signed-my-first-of-many-hopefully-freelance-contract-/" title="Next Post: woohoo! just signed my first (of many, hopefully) freelance contract!">woohoo! just signed my first (of many, hopefully) freelance contract! &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/async-programming-part-2-promises/">Async Programming Part 2: Promises</a>
+      </li>
+    
+      <li class="post">
+        <a href="/async-programming-part-1-it-s-messy/">Async Programming Part 1: It's Messy</a>
+      </li>
+    
+      <li class="post">
+        <a href="/oocss-slides-and-more-from-the-jquery-pgh-meetup/">OOCSS slides and more from the jQuery Pgh meetup</a>
+      </li>
+    
+      <li class="post">
+        <a href="/oocss-at-the-next-jquery-pgh-meetup/">OOCSS at the next jQuery Pgh meetup</a>
+      </li>
+    
+      <li class="post">
+        <a href="/simple-oocss-slideshows/">Simple OOCSS Slideshows</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

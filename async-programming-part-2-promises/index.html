@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Async Programming Part 2: Promises - technorthodox</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="In Part 1, we looked at the awkward situation created when we introduce callbacks to handle even a single asynchronous operation into an otherwise &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://briancavalier.github.io/async-programming-part-2-promises">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="technorthodox" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">technorthodox</a></h1>
+  
+    <h2>A bunch of stuff that doesn't go together</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:briancavalier.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Async Programming Part 2: Promises</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-22T00:00:00-05:00" pubdate data-updated="true">Feb 22<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>In <a href="http://blog.briancavalier.com/async-programming-part-1-its-messy">Part 1</a>, we looked at the awkward situation created when we introduce callbacks to handle even a single asynchronous operation into an otherwise simple set of function calls.</p>
+
+<p>As a quick review, have a look back at the <a href="https://gist.github.com/1790802">code we started with</a>, the <a href="https://gist.github.com/1790826">messy end result</a> when using callbacks, and the things we&rsquo;d like to fix in order to get back to sanity:</p>
+
+<ol>
+<li>We can no longer use a simple call-and-return programming model</li>
+<li>We can no longer handle errors using try/catch/finally</li>
+<li>We must add callback and errback parameters to every function signature that might eventually lead to an asynchronous operation</li>
+</ol>
+
+
+<h1>Promises</h1>
+
+<p>A Promise (aka Future, Delayed value, Deferred value) represents a value that is not yet available because the computation that will produce the value has not yet completed.  A Promise is a <em>placeholder</em> into which the successful result or reason for failure will eventually materialize.</p>
+
+<p>Promises also provide a simple API (see note below) for being notified when the result has materialized, <em>or</em> when a failure has occured.</p>
+
+<p>Promises are <a href="http://en.wikipedia.org/wiki/Futures_and_promises">not a new concept</a>, and have been implemented in many languages. While several implementations of the Promise concept in Javascript have been around for a while, they have started to gain more popularity recently as we start to build bigger, more complex systems that require coordinating more asynchronous tasks.</p>
+
+<p>(NOTE: Although there are <a href="http://wiki.commonjs.org/wiki/Promises">several proposed</a> Promise API standards, <a href="http://wiki.commonjs.org/wiki/Promises">Promises/A</a> has been implemented in several major frameworks, and appears to be becoming the <em>defacto standard</em>. In any case, the basic concepts are the same: 1) Promises act as a placeholder for a result or error, 2) they provide a way to be notified when the actual result has materialized, or when a failure has occurred.)</p>
+
+<h1>The Canonical XHR Example</h1>
+
+<p>In the case of an XHR Get, the value we care about is the content of the url we&rsquo;re fetching.  We know that XHR is an asynchonous operation, and that the value won&rsquo;t be available immediately.  That fits the definition of a Promise perfectly.</p>
+
+<p>Imagine that we have an XHR library that <em>immediately</em> returns a Promise, as a placeholder for the content, instead of requiring us to pass in a callback.  We could rewrite our asynchronous <code>thisMightFail</code> function from Part 1 to look like this:</p>
+
+<p><script src="https://gist.github.com/1886889.js"></script></p>
+
+<p>(Note that several popular Javascript libraries, including <a href="http://dojotoolkit.org/reference-guide/dojo/xhrGet.html">Dojo</a> (see also this <a href="http://dojotoolkit.org/documentation/tutorials/1.6/deferreds/">great article on Dojo&rsquo;s Deferred</a> by <a href="https://twitter.com/bryanforbes">@bryanforbes</a>) and <a href="http://api.jquery.com/Types/#jqXHR">jQuery</a>, implement XHR operations using promises)</p>
+
+<p>Now, we can return the Promise placeholder <em>as if it were the real result</em>, and our asynchronous <code>thisMightFail</code> function looks very much like a plain old synchronous, call-and-return operation.</p>
+
+<h1>Taking Back the Stack</h1>
+
+<p>In a non-callback world, results and errors flow back <em>up</em> the call stack.  This is expected and familiar.  In a callback-based world, as we&rsquo;ve seen, results and errors no longer follow that familiar model, and instead, callbacks must flow <em>down</em>, deeper into the stack.</p>
+
+<p>By using Promises, we can restore the familiar call-and-return programming model, and remove the callbacks.</p>
+
+<h2>Restoring Call-and-return</h2>
+
+<p>To see how this works, let&rsquo;s start with a simplified version of the <a href="https://gist.github.com/1790802">synchronous <code>getTheResult</code> function</a> from <a href="http://blog.briancavalier.com/async-programming-part-1-its-messy">Part 1</a>, without try/catch so that exceptions will always propagate up the call stack.</p>
+
+<p><script src="https://gist.github.com/1886893.js"></script></p>
+
+<p>Now let&rsquo;s introduce the <em>asynchronous</em> <code>thisMightFail</code> from above that uses our Promise-based XHR lib.</p>
+
+<p><script src="https://gist.github.com/1886896.js"></script></p>
+
+<p>Using Promises, <code>getTheResult()</code> is identical in the synchronous and asynchronous cases!  And in both, the successful result <em>or the failure</em> will propagate <em>up</em> the stack to the caller.</p>
+
+<h2>Removing Callbacks</h2>
+
+<p>Notice also that there are no callbacks or errbacks (or alwaysbacks!) being passed down the callstack, and they haven&rsquo;t polluted any of our function signatures.  By using Promises, our functions now <em>look and act</em> like the familiar, synchronous, call-and-return model.</p>
+
+<h2>Done?</h2>
+
+<p>We&rsquo;ve used Promises to refactor our simplified <code>getTheResult</code> function, and fix two of the problems we identified in Part 1.  We&rsquo;ve:</p>
+
+<ol>
+<li>restored call-and-return</li>
+<li>removed callback/errback/alwaysback parameter propagation</li>
+</ol>
+
+
+<p>But, what does this mean for callers of <code>getTheResult</code>?  Remember that we&rsquo;re returning a Promise, and eventually, either the successful result (the result of the XHR) or an error will materialize into the Promise placeholder, at which point the caller will want to take some action.</p>
+
+<h1>What about the Caller?</h1>
+
+<p>As mentioned above, Promises provide an API for being notified when either the result or failure becomes available.  For example, in the proposed Promises/A spec, a Promise has a <code>.then()</code> method, and many promise libraries provide a <code>when()</code> function that achieves the same goal.</p>
+
+<p>First, let&rsquo;s look at what the calling code might look like when using the callback-based approach:</p>
+
+<p><script src="https://gist.github.com/1886899.js"></script></p>
+
+<p>Now, let&rsquo;s look at how the caller can use the Promise that <code>getTheResult</code> returns using the Promises/A <code>.then()</code> API.</p>
+
+<p><script src="https://gist.github.com/1886909.js"></script></p>
+
+<p>Or, more compactly:</p>
+
+<p><script src="https://gist.github.com/1886911.js"></script></p>
+
+<p><img src="http://briancavalier.s3.amazonaws.com/blog/funny-surprised-owl-WHAT.jpg" alt="WAT" /></p>
+
+<p>(Image from <a href="http://themetapicture.com/wat/">The Meta Picture</a>)</p>
+
+<p>Wasn&rsquo;t the whole point of this Promises stuff to <em>avoid using callbacks</em>?  And here we are using them?!?</p>
+
+<h1>Stay with Me</h1>
+
+<p>In Javascript, Promises are implemented using callbacks because there is no language-level construct for dealing with asynchrony.  Callbacks are a necessary <em>implementation detail</em> of Promises.  If Javascript provided, or possibly when it does provide in the future, other language constructs, promises could be implemented differently.</p>
+
+<p>However, there are several important advantages in using Promises over the deep callback passing model from Part 1.</p>
+
+<p>First, our function signatures are sane.  We have removed the need to add callback and errback parameters to every function signature from the caller down to the XHR lib, and only the caller who is ultimately interested in the result needs to mess with callbacks.</p>
+
+<p>Second, the Promise API standardizes callback passing.  Libraries all tend to place callbacks and errbacks at different positions in function signatures.  Some don&rsquo;t even accept an errback.  <em>Most</em> don&rsquo;t accept an alwaysback (i.e. &ldquo;finally&rdquo;).  We can rely on the Promise API instead of <em>many potentially different library APIs</em>.</p>
+
+<p>Third, a Promise makes a set of <em>guarantees</em> about how and when callbacks and errbacks will be called, and how return values and exceptions thrown by callbacks will be handled.  In a non-Promise world, the multitude of callback-supporting libraries and their many function signatures also means a multitude of different behaviors:</p>
+
+<ol>
+<li>Are your callbacks allowed to return a value?</li>
+<li>If so, what happens to that value?</li>
+<li>Do all libraries allow your callback to throw an exception?  If so, what happens to it?  Is it silently eaten?</li>
+<li>If your callback does throw an exception, will your errback be called, or not?</li>
+</ol>
+
+
+<p>&hellip; and so on &hellip;</p>
+
+<p>So, while one way to think of Promises is as a standard API to callback registration, they also provide standard, predictable <em>behavior</em> for how and when a callback will be called, exception handling, etc.</p>
+
+<h1>What about try/catch/finally?</h1>
+
+<p>Now that we&rsquo;ve restored call-and-return and removed callbacks from our function signatures, we need a way to handle failures.  Ideally, we&rsquo;d like to use try/catch/finally, or at least something that <em>looks and acts just like it</em> and works in the face of asynchrony.</p>
+
+<p>In Part 3, we&rsquo;ll put the final piece of the puzzle into place, and see how to model try/catch/finally using Promises.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-22T00:00:00-05:00" pubdate data-updated="true">Feb 22<span>nd</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://briancavalier.github.io/async-programming-part-2-promises/" data-via="" data-counturl="http://briancavalier.github.io/async-programming-part-2-promises/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/async-programming-part-1-it-s-messy/" title="Previous Post: Async Programming Part 1: It's Messy">&laquo; Async Programming Part 1: It's Messy</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/async-programming-part-2-promises/">Async Programming Part 2: Promises</a>
+      </li>
+    
+      <li class="post">
+        <a href="/async-programming-part-1-it-s-messy/">Async Programming Part 1: It's Messy</a>
+      </li>
+    
+      <li class="post">
+        <a href="/oocss-slides-and-more-from-the-jquery-pgh-meetup/">OOCSS slides and more from the jQuery Pgh meetup</a>
+      </li>
+    
+      <li class="post">
+        <a href="/oocss-at-the-next-jquery-pgh-meetup/">OOCSS at the next jQuery Pgh meetup</a>
+      </li>
+    
+      <li class="post">
+        <a href="/simple-oocss-slideshows/">Simple OOCSS Slideshows</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
