@@ -1,0 +1,30 @@
+---
+layout: post
+title: Font-based digital clock theme using only CSS
+published: true
+---
+<p>Ever since Daniel posted his <a href="http://daniellmb.com/binary-clock.htm" title="MVC OOCSS Binary Clock">binary mod</a> of my digital clock, I&rsquo;ve been thinking about other ways to push the limits of the clock using only CSS.  At <a href="http://blog.briancavalier.com/oocss-for-javascript-pirates-at-jqcon-2010" title="OOCSS for Javascript Pirates at JQCon 2010 - technorthodox">JQCon</a>, I also talked to a few folks between sessions who had wondered the same thing.  So, I&rsquo;ve decided to give it a go.</p>
+
+<p>One of the first ideas I had was to try to use fonts instead of the LED divs to show the clock digits.  So, <a href="http://briancavalier.com/digital-clock/" title="CSS3 Digital Clock">here you go</a>.</p>
+
+<p>It turned out to be fairly easy, and required <em>zero changes</em> to the Javascript view controller.  The view controller simply passes the same messages to the view as it did before.  In other words, the view controller relies on a message-passing-based view API to which the OOCSS responds.  That API is unchanged in this version.  To verify, you can hop on over to Daniel&rsquo;s <a href="http://daniellmb.com/binary-clock.htm" title="MVC OOCSS Binary Clock">binary mod</a>, which references my JS directly, and see that it still works.</p>
+
+<p>It also required only superficial changes to the HTML:</p>
+
+<ol>
+<li>I added the button for the new theme in the row of theme buttons.</li>
+<li>I added &ldquo;hour&rdquo; and &ldquo;minute&rdquo; classes to the digits representing hours and minutes.  This change was not necessary to support the new font-based theme, but makes the hours and minutes consistent with the seconds, which already had the class &ldquo;second&rdquo;.</li>
+</ol>
+
+
+<p>The key changes were, of course, in the CSS, and here are some of the most relevant bits.</p>
+
+<p><script src="https://gist.github.com/640955.js"></script></p>
+
+<p>The comments pretty much say it all, but basically it hides the LEDs and then uses :before content to inject the font-based digits.</p>
+
+<p>One thing I hadn&rsquo;t thought about before I actually ran it the first time, was that the &ldquo;1&rdquo; digit is much thinner than all the others, so I had to forcibly set a specific width for it (in both hours/minutes and the smaller seconds).  Without that specialization, the clock looks too sparse when there is a &ldquo;1&rdquo; (or several &ldquo;1"s) being displayed.  Yet another win for the OOCSS base and specialization pattern.</p>
+
+<p>I think this theme looks pretty good (although I&rsquo;m still partial to the LEDs), but if you have suggestions for how to tweak it, I&rsquo;d love to hear them.  Also, if you have an idea for how to push the envelope, feel free to leave a comment, or <a href="http://twitter.com/briancavalier" title="@briancavalier">tweet it up</a>!</p>
+
+<p>Stay tuned for more envelope pushing &hellip;</p>

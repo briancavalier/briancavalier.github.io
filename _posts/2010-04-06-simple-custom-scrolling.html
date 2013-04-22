@@ -1,0 +1,13 @@
+---
+layout: post
+title: Simple custom scrolling
+published: true
+---
+<p>
+<p>I <a href="http://briancavalier.posterous.com/should-scrollbars-go-away" title="Should scrollbars go away?">mentioned recently</a> that I think scrollbars as we know them today need to be replaced with better metaphors. While I don't claim to know what those should be, by coincidence, a couple of my current projects will be exploring some custom scrolling controls.</p>
+<p>One good thing about using system-provided scrollbars is that their engineering cost is essentially zero, whereas custom scrolling typically requires writing code to handle mouse events and move the scrollable region accordingly.</p>
+<p>How challenging that code is depends on how sophisticated your custom scrolling mechanism needs to be, and how easy or hard those things are to implement in your target environment. &nbsp;For example, do you need to write code specifically to handle the mouse scroll wheel? Do you need/want acceleration? Momentum? Drag-to-scroll? "Forever" scrolling a la Google Reader?</p>
+<p>So, about a week ago, I decided to whip up some simple custom scrolling code as a proof of concept. &nbsp;It's really not all that impressive since it acts like a system-provided scrollable area sans the system-provided scrollbar. &nbsp;It would almost certainly need to be more sophisticated for a real application. &nbsp;For example, I only did horizontal because that is the particular case I'm dealing with in one of my projects, and I didn't actually implement a custom scrollbar, only the scrolling mechanism itself.</p>
+<p>But, I think it did it's job, which was to prove that, at least in a browser, it's not unreasonably hard to create the guts of a custom scrolling mechanism that behaves intuitively.</p>
+<p>Feel free to <a href="http://bit.ly/9A3JAi" title="Simple custom scrolling implementation">try it out</a>, view source, reuse the ideas, and post ideas, suggestions, or code to make it better!</p>
+</p>
