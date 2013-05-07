@@ -159,22 +159,28 @@ article {
 	
 }
 
-figure.code {
-	.highlight {
-		.gutter {
-			display: none;
-		}
-	}
+aside {
+	display: none;
 }
+
+/* Gists and syntax highlighting */
 
 .gist .highlight {
 	width: 100%;
 }
+
 .gist .gist-data {
 	font-size: 12px !important;
 	background: none !important;
 }
 
-aside {
-	display: none;
+/* Footnotes */
+
+.footnotes {
+	font-size: 0.9em;
+	color: #666;
+}
+
+sup {
+  vertical-align: super;
 }
