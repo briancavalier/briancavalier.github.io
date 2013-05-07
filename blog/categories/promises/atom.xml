@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: promises | Brian Cavalier]]></title>
+  <link href="http://briancavalier.github.io/blog/categories/promises/atom.xml" rel="self"/>
+  <link href="http://briancavalier.github.io/"/>
+  <updated>2013-05-07T09:57:20-04:00</updated>
+  <id>http://briancavalier.github.io/</id>
+  <author>
+    <name><![CDATA[Brian Cavalier]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Async Programming Part 3: Finally]]></title>
+    <link href="http://briancavalier.github.io/async-programming-part-3-finally/"/>
+    <updated>2013-05-03T07:44:00-04:00</updated>
+    <id>http://briancavalier.github.io/async-programming-part-3-finally</id>
+    <content type="html"><![CDATA[<p>As we saw in <a href="async-programming-part-1-it-s-messy">Part 1</a>, error handling in callback-based asynchronous code gets messy quickly, and loses many of the qualities of synchronous code that make it familiar and easier to reason about.  In <a href="async-programming-part-2-promises">Part 2</a>, we introduced Promises and saw how they restore call-and-return semantics, allow errors to propagate up the stack similarly to synchronous exceptions, and generally provide a cleaner approach to managing asynchrony, especially when handling errors.</p>
+
+<h2>Try/catch/finally</h2>
+
+<p>In synchronous code, <code>try/catch/finally</code> provides a simple and familiar, yet very powerful idiom for performing a task, handling errors, and then always ensuring we can clean up afterward.</p>
+
+<p>Here&rsquo;s a simple <code>try/catch/finally</code> example in the same vein as the original <code>getTheResult()</code> from Part 1:</p>
+
+<p>```js
+// Sync
+function getTheResult() {</p>
+
+<pre><code>try {
+    return thisMightFail();
+} catch(e) {
+    return recoverFromFailure(e);
+} finally {
+    alwaysCleanup();
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>As we&rsquo;ve seen, attempting to simulate even the <code>try/catch</code> via a callback-based approach is fraught with pitfalls.  Adding the notion of <code>finally</code>, that is, <em>guaranteed cleanup</em>, only makes things worse.</p>
+
+<p>Using Promises, we can use an approach that is analogous to this familiar <code>try/catch/finally</code> idiom, without deep callback structures.</p>
+
+<h2>Try/catch</h2>
+
+<p>Let&rsquo;s start with a simpler version of example above that only uses <code>try/catch</code>, and see how we can use Promises to handle errors in the same way.</p>
+
+<p>```js
+// Sync
+function getTheResult() {</p>
+
+<pre><code>try {
+    return thisMightFail();
+} catch(e) {
+    return recoverFromFailure(e);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>And now, as in Part 2, let&rsquo;s assume that <code>thisMightFail()</code> is asynchronous and returns a Promise.  We can use <code>then()</code> to simulate <code>catch</code>:</p>
+
+<p>```js
+// Async
+function thisMightFail() {</p>
+
+<pre><code>//...
+return promise;
+</code></pre>
+
+<p>}</p>
+
+<p>function getTheResult() {</p>
+
+<pre><code>return thisMightFail()
+    .then(null, recoverFromFailure);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Waitaminit, that&rsquo;s <em>even less code</em> than using <code>try/catch</code>!  What&rsquo;s going on here?</p>
+
+<h3>Propagating a success</h3>
+
+<p>This example introduces two very important facts about how Promises behave. The first of which is:</p>
+
+<p>If no <code>onFulfilled</code> handler is provided to <code>then()</code>, the fulfillment value will propagate through unchanged to the returned Promise.</p>
+
+<p>We&rsquo;re <em>not</em> supplying an <code>onFulfilled</code> handler when calling <code>then()</code>.  This means that a successful result from <code>thisMightFail()</code> simply will propagate through and be returned to the caller.</p>
+
+<h3>Handling an error</h3>
+
+<p>The other important behavior is:</p>
+
+<p>A handler may produce either a successful result by <code>return</code>ing a value, or an error by <code>throw</code>ing or <code>return</code>ing a rejected promise.</p>
+
+<p>We <em>are</em> supplying an <code>onRejected</code> handler: <code>recoverFromFailure</code>.  That means that any error produced by <code>thisMightFail</code> will be provided to <code>recoverFromFailure</code>.  Just like the <code>catch</code> statement in the synchronous example, <code>recoverFromFailure</code> can handle the error and <code>return</code> a successful result, <em>or</em> it can produce an error by throwing or returning a rejected Promise.</p>
+
+<p>Now we have a fully asynchronous construct that behaves like its synchronous analog, and is just as easy to write.</p>
+
+<h3>Adding some sugar</h3>
+
+<p>Hmmm, but what about that <code>null</code>?  Why should we have to type <code>null</code> everywhere we want to use this asynchronous <code>try/catch</code>-like construct?  Can&rsquo;t we do better?</p>
+
+<p>While the primary interface to a Promises/A+ Promise is its <code>then()</code> method, many implementations add convenience methods, built upon <code>then()</code>.  For example, <a href="https://github.com/cujojs/when">when.js</a> Promises provide an <a href="https://github.com/cujojs/when/blob/master/docs/api.md#otherwise"><code>otherwise()</code> method</a> that allows us to write this example more intuitive and compactly:</p>
+
+<p>```js
+// Async: Using when.js promise.otherwise();
+function getTheResult() {</p>
+
+<pre><code>return thisMightFail()
+    .otherwise(recoverFromFailure);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Now we have something that reads nicely!</p>
+
+<h2>Adding finally</h2>
+
+<p>Let&rsquo;s add <code>finally</code> back into the mix, and see how we can use Promises to achieve the same result for asynchronous operations.</p>
+
+<p>```js
+// Sync
+function getTheResult() {</p>
+
+<pre><code>try {
+    return thisMightFail();
+} catch(e) {
+    return recoverFromFailure(e);
+} finally {
+    alwaysCleanup();
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>First, let&rsquo;s note that there are some very interesting things about this seemingly simple <code>finally</code> block.  It:</p>
+
+<ol>
+<li>will always execute after <code>thisMightFail</code> and/or <code>recoverFromFailure</code></li>
+<li>does not have access to the value returned by <code>thisMightFail</code>, or to the thrown exception (<code>e</code>), or to the value returned by <code>recoverFromFailure</code> <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>.</li>
+<li>cannot, in this case, transform an exception thrown by <code>recoverFromFailure</code> back into a successful result[1].</li>
+<li><em>can</em> change a successful result (returned by either <code>thisMightFail</code> or <code>recoverFromFailure</code>) into a failure if <code>alwaysCleanup</code> throws an exception.</li>
+<li><em>can</em> substitute a new exception in place of one thrown by <code>recoverFromFailure</code>.  That is, if both <code>recoverFromFailure</code> and <code>alwaysCleanup</code> throw exceptions, the one thrown by <code>alwaysCleanup</code> will propagate to the caller, and the one thrown by <code>recoverFromFailure</code> <em>will not</em>.</li>
+</ol>
+
+
+<p>This seems fairly sophisticated.  Let&rsquo;s return to our asynchronous <code>getTheResult</code> and look at how we can achieve these same properties using Promises.</p>
+
+<h3>Always execute</h3>
+
+<p>First, let&rsquo;s use <code>then()</code> to ensure that <code>alwaysCleanup</code> will execute in all cases (for succinctness, we&rsquo;ll keep when.js&rsquo;s <code>otherwise</code>):</p>
+
+<p>```js
+// Async
+function getTheResult() {</p>
+
+<pre><code>return thisMightFail()
+    .otherwise(recoverFromFailure);
+    .then(alwaysCleanup, alwaysCleanup);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>That seems simple enough!  Now, <code>alwaysCleanup</code> will be executed in all cases:</p>
+
+<ol>
+<li>if <code>thisMightFail</code> succeeds,</li>
+<li>if <code>thisMightFail</code> fails and <code>recoverFromFailure</code> succeeds, or</li>
+<li>if <code>thisMightFail</code> and <code>recoverFromFailure</code> both fail.</li>
+</ol>
+
+
+<p>But wait, while we&rsquo;ve ensured that <code>alwaysCleanup</code> will always execute, we&rsquo;ve violated two of the other properties:  <code>alwaysCleanup</code> <em>will</em> receive the successful result or the error, so has access to either/both, and it <em>can</em> transform an error into a successful result by returning successfully.</p>
+
+<h3>Don&rsquo;t access result/error</h3>
+
+<p>We can introduce a wrapper to prevent passing the result or error to <code>alwaysCleanup</code>:</p>
+
+<p>```js
+// Async
+function alwaysCleanupWrapper(resultOrError) {</p>
+
+<pre><code>// don't pass resultOrError through
+return alwaysCleanup();
+</code></pre>
+
+<p>}</p>
+
+<p>function getTheResult() {</p>
+
+<pre><code>return thisMightFail()
+    .otherwise(recoverFromFailure);
+    .then(alwaysCleanupWrapper, alwaysCleanupWrapper);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Now we&rsquo;ve achieved one of the two properties we had lost: <code>alwaysCleanup</code> no longer has access to the result or error.  Unfortunately, we had to add some code that feels unnecessary.  Let&rsquo;s keep exploring, though, to see if we can achieve the remaining property.</p>
+
+<h3>Don&rsquo;t change the result</h3>
+
+<p>While <code>alwaysCleanupWrapper</code> prevents <code>alwaysCleanup</code> from accessing the result or error, it still allows <code>alwaysCleanup</code> to turn an error condition into a successful result.  For example, if <code>recoverFromFailure</code> produces an error, it will be passed to <code>alwaysCleanupWrapper</code>, which will then call <code>alwaysCleanup</code>.  If <code>alwaysCleanup</code> returns successfully, the result will be propagated to the caller, thus squelching the previous error.</p>
+
+<p>That doesn&rsquo;t align with how our synchronous <code>finally</code> clause behaves, so let&rsquo;s refactor:</p>
+
+<p>```js
+// Async
+function alwaysCleanupOnSuccess(result) {</p>
+
+<pre><code>// don't pass result through, *and ignore* the return value
+// of alwaysCleanup.  Instead, return original result to propagate it.
+alwaysCleanup();
+return result;
+</code></pre>
+
+<p>}</p>
+
+<p>function alwaysCleanupOnFailure(error) {</p>
+
+<pre><code>// don't pass result through, *and ignore* the result
+// of alwaysCleanup.  Instead, rethrow error to propagate the failure.
+alwaysCleanup();
+throw error;
+</code></pre>
+
+<p>}</p>
+
+<p>function getTheResult() {</p>
+
+<pre><code>return thisMightFail()
+    .otherwise(recoverFromFailure);
+    .then(alwaysCleanupOnSuccess, alwaysCleanupOnFailure);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>In both the success and failure cases, we&rsquo;ve preserved the outcome: <code>alwaysCleanupOnSuccess</code> will execute <code>alwaysCleanup</code> but not allow it to change the ultimate result, and <code>alwaysCleanupOnFailure</code> will also execute <code>alwaysCleanup</code> and always rethrow the original error, thus propagating it even if <code>alwaysCleanup</code> returns successfully.</p>
+
+<h3>The remaining two properties</h3>
+
+<p>Looking at the refactor above, we can also see that the remaining two properties hold:</p>
+
+<p>In <code>alwaysCleanupOnSuccess</code>, if <code>alwaysCleanup</code> throws, the <code>return result</code> will never be reached, and this new error will be propagated to the caller, thus turning a successful result into a failure.</p>
+
+<p>In <code>alwaysCleanupOnFailure</code>, if <code>alwaysCleanup</code> throws, the <code>throw error</code> will never be reached, and the error thrown by <code>alwaysCleanup</code> will be propagated to the caller, thus substituting a new error.</p>
+
+<h2>Finally?</h2>
+
+<p>With this latest refactor, we&rsquo;ve created an asynchronous construct that behaves like its familiar, synchronous <code>try/catch/finally</code> analog.</p>
+
+<h3>More sugar</h3>
+
+<p>Some Promise implementations provide an abstraction for the <code>finally</code>-like behavior we want.  For example, when.js Promises provide an <a href="https://github.com/cujojs/when/blob/master/docs/api.md#ensure"><code>ensure()</code> method</a> that has all of the properties we achieved above, but also allows us to be more succinct:</p>
+
+<p>```js
+// Async: Using when.js promise.ensure();
+function getTheResult() {</p>
+
+<pre><code>return thisMightFail()
+    .otherwise(recoverFromFailure)
+    .ensure(alwaysCleanup);
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>Finally</h2>
+
+<p>We started with the goal of finding a way to model the useful and familiar synchronous <code>try/catch/finally</code> behavior for asynchronous operations.  Here&rsquo;s the simple, synchronous code we started with:</p>
+
+<p>```js
+// Sync
+function getTheResult() {</p>
+
+<pre><code>try {
+    return thisMightFail();
+} catch(e) {
+    return recoverFromFailure(e);
+} finally {
+    alwaysCleanup();
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>And here is the asynchronous analog we ended up with something that is just as compact, and easily readable:</p>
+
+<p>```js
+// Async
+function getTheResult() {</p>
+
+<pre><code>return thisMightFail()
+    .otherwise(recoverFromFailure)
+    .ensure(alwaysCleanup);
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>Try/finally</h2>
+
+<p>Another common construct is <code>try/finally</code>.  It is useful in executing cleanup code, but always allowing exceptions to propagate in the case where there is no immediate recovery path.  For example:</p>
+
+<p>```js
+// Sync
+function getTheResult() {</p>
+
+<pre><code>try {
+    return thisMightFail();
+} finally {
+    alwaysCleanup();
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Now that we&rsquo;ve modeled a full <code>try/catch/finally</code> using Promises, modeling <code>try/finally</code> is trivial.  Similarly to simply cutting out the <code>catch</code> above, we can cut out the <code>otherwise()</code> in our Promise version:</p>
+
+<p>```js
+// Async
+function getTheResult() {</p>
+
+<pre><code>return thisMightFail()
+    .ensure(alwaysCleanup);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>All of the constraints we&rsquo;ve been attempting to achieve still hold&mdash;this asynchronous construct will behave analogously to its synchronous <code>try/finally</code> counterpart.</p>
+
+<h2>Using it</h2>
+
+<p>Let&rsquo;s compare how we would use the synchronous and asynchronous versions of <code>getTheResult</code>.  Assume we have the following two pre-existing functions for showing results and errors.  For simplicity, let&rsquo;s also assume that <code>showResult</code> might fail, but that <code>showError</code> will <em>not</em> fail.</p>
+
+<p>```js
+// Assume showResult might fail
+function showResult(result) { /<em> Format and show the result </em>/ }</p>
+
+<p>// Assume showError will never fail
+function showError(error) { /<em> Show the error, warn the user, etc. </em>/ }
+```</p>
+
+<h3>Synchronous</h3>
+
+<p>First, the synchronous version, which we might use like this:</p>
+
+<p>```js
+// Sync
+try {</p>
+
+<pre><code>showResult(getTheResult());
+</code></pre>
+
+<p>} catch(e) {</p>
+
+<pre><code>showError(e);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>It&rsquo;s quite simple, as we&rsquo;d expect.  If we get the result successfully, then we show it.  If getting the result fails (by throwing an exception), we show the error.</p>
+
+<p>It&rsquo;s also important to note that if <code>showResult</code> fails, we will show an error.  This is an important hallmark of synchronous exceptions.  We&rsquo;ve written single <code>catch</code> clause that will handle errors from either <code>getTheResult</code> or <code>showResult</code>.  The error propagation is <em>automatic</em>, and required no additional effort on our part.</p>
+
+<h3>Asynchronous</h3>
+
+<p>Now, let&rsquo;s look at how we&rsquo;d use the asynchronous version to accomplish the same goals:</p>
+
+<p>```js
+// Async
+getTheResult().then(showResult)</p>
+
+<pre><code>.otherwise(showError);
+</code></pre>
+
+<p>```</p>
+
+<p>The functionality here is analogous, and one could argue that visually, this is even simpler than the synchronous version.  We get the result, or rather in this case, a Promise for the result, and when the actual result materializes (remember, this is all asynchronous!), we show it.  If getting the result fails (by rejecting resultPromise), we show the error.</p>
+
+<p>Because Promises propagate errors similarly to exceptions, if <code>showResult</code> fails, we will also show an error.  So, the automatic the behavior here is also parallel to the synchronous version: We&rsquo;ve written single <code>otherwise</code> call that will handle errors from either <code>getTheResult</code> or <code>showResult</code>.</p>
+
+<p>Another important thing to notice is that we are able to use the same <code>showResult</code> and <code>showError</code> functions as in the synchronous version.  We don&rsquo;t need artificial callback-specific function signatures to work with promises&mdash;just the same functions we&rsquo;d write anyway.</p>
+
+<h2>Putting it all together</h2>
+
+<p>We&rsquo;ve refactored our <code>getTheResult</code> code to use Promises to eumlate <code>try/catch/finally</code>, and also the calling code to use the returned Promise to handle all the same error cases we would handle in the synchronous version.  Let&rsquo;s look at the complete Promise-based asynchronous version of our code:</p>
+
+<p>```js
+// Using getTheResult()
+getTheResult().then(showResult)</p>
+
+<pre><code>.otherwise(showError);
+</code></pre>
+
+<p>```</p>
+
+<p>```js
+function getTheResult() {</p>
+
+<pre><code>return thisMightFail()
+    .otherwise(recoverFromFailure)
+    .ensure(alwaysCleanup);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>```js
+function thisMightFail() {</p>
+
+<pre><code>// Using the proposed Promises/A+ style API for promise creation
+return makePromise(function(resolve, reject) {
+    var result, error;
+
+    // Do work, then:
+
+    if(error) {
+        reject(error);
+    } else {
+        resolve(result);
+    }
+});
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>The end?</h2>
+
+<p>Of course, there will always be differences between synchronous and asynchronous execution, but by using Promises, we can narrow the divide.  The synchronous and Promise-based versions we&rsquo;ve constructed not only look very similar, they <em>behave</em> similarly.  They have similar invariants.  We can reason about them in similar ways.  We can even <em>refactor</em> and <em>test</em> them in similar ways.</p>
+
+<p>Providing familiar and predictable error handling patterns and composable call-and-return semantics are two powerful aspects of Promises, but they are also only the beginning.  Promises are a building block on which fully asynchronous analogs of many other familiar features can be built easily: higher order functions like <a href="https://github.com/cujojs/when/blob/master/docs/api.md#whenmap"><code>map</code></a> and <a href="https://github.com/cujojs/when/blob/master/docs/api.md#whenreduce"><code>reduce</code></a>/<code>fold</code>, <a href="https://github.com/cujojs/when/blob/master/docs/api.md#concurrency">parallel and sequential</a> task execution, and much more.</p>
+<div class="footnotes">
+<hr/>
+<ol>
+<li id="fn:1">
+<p>You might be wondering why we want this property.  For this article, we&rsquo;re choosing to try to model <code>finally</code> as closely as possible.  The intention of synchronous <code>finally</code> is to cause <em>side effects</em>, such as closing a file or database connection, and not to transform the result or error by applying a function to it.  Also, passing something that <em>might be a result or might be an error</em> to <code>alwaysCleanup</code> can be a source of hazards without <em>also</em> telling <code>alwaysCleanup</code> what kind of thing it is receiving. The fact that <code>finally</code> doesn&rsquo;t have a &ldquo;parameter&rdquo;, like <code>catch</code> means that the burden is on the developer to grant access to the result or error, usually by storing it in a local variable before execution enters the <code>finally</code>. That approach will work for these promise-based approaches as well.<a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+</ol>
+</div>
+
+]]></content>
+  </entry>
+  
+</feed>

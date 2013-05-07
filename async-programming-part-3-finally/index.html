@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Brian Cavalier</title>
+  <title>Async Programming Part 3: Finally - Brian Cavalier</title>
   <meta name="author" content="Brian Cavalier">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://briancavalier.github.io">
+  <link rel="canonical" href="http://briancavalier.github.io/async-programming-part-3-finally">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Brian Cavalier" type="application/atom+xml">
@@ -71,15 +71,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/async-programming-part-3-finally/">Async Programming Part 3: Finally</a></h1>
+      <h1 class="entry-title">Async Programming Part 3: Finally</h1>
     
     
       <p class="meta">
@@ -102,7 +99,7 @@
   </header>
 
 
-  <div class="entry-content"><p>As we saw in <a href="async-programming-part-1-it-s-messy">Part 1</a>, error handling in callback-based asynchronous code gets messy quickly, and loses many of the qualities of synchronous code that make it familiar and easier to reason about.  In <a href="async-programming-part-2-promises">Part 2</a>, we introduced Promises and saw how they restore call-and-return semantics, allow errors to propagate up the stack similarly to synchronous exceptions, and generally provide a cleaner approach to managing asynchrony, especially when handling errors.</p>
+<div class="entry-content"><p>As we saw in <a href="async-programming-part-1-it-s-messy">Part 1</a>, error handling in callback-based asynchronous code gets messy quickly, and loses many of the qualities of synchronous code that make it familiar and easier to reason about.  In <a href="async-programming-part-2-promises">Part 2</a>, we introduced Promises and saw how they restore call-and-return semantics, allow errors to propagate up the stack similarly to synchronous exceptions, and generally provide a cleaner approach to managing asynchrony, especially when handling errors.</p>
 
 <h2>Try/catch/finally</h2>
 
@@ -675,175 +672,16 @@
 </div>
 
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/async-programming-part-2-promises/">Async Programming Part 2: Promises</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">Brian Cavalier</span></span>
 
-<time datetime="2012-02-22T00:00:00-05:00" pubdate data-updated="true">Feb 22<span>nd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>In <a href="/async-programming-part-1-it-s-messy">Part 1</a>, we looked at the awkward situation created when we introduce callbacks to handle even a single asynchronous operation into an otherwise simple set of function calls.</p>
-
-<p>As a quick review, have a look back at the <a href="https://gist.github.com/1790802">code we started with</a>, the <a href="https://gist.github.com/1790826">messy end result</a> when using callbacks, and the things we&rsquo;d like to fix in order to get back to sanity:</p>
-
-<ol>
-<li>We can no longer use a simple call-and-return programming model</li>
-<li>We can no longer handle errors using try/catch/finally</li>
-<li>We must add callback and errback parameters to every function signature that might eventually lead to an asynchronous operation</li>
-</ol>
-
-
-<h1>Promises</h1>
-
-<p>A Promise (aka Future, Delayed value, Deferred value) represents a value that is not yet available because the computation that will produce the value has not yet completed.  A Promise is a <em>placeholder</em> into which the successful result or reason for failure will eventually materialize.</p>
-
-<p>Promises also provide a simple API (see note below) for being notified when the result has materialized, <em>or</em> when a failure has occured.</p>
-
-<p>Promises are <a href="http://en.wikipedia.org/wiki/Futures_and_promises">not a new concept</a>, and have been implemented in many languages. While several implementations of the Promise concept in Javascript have been around for a while, they have started to gain more popularity recently as we start to build bigger, more complex systems that require coordinating more asynchronous tasks.</p>
-
-<p>(NOTE: Although there are <a href="http://wiki.commonjs.org/wiki/Promises">several proposed</a> Promise API standards, <a href="http://wiki.commonjs.org/wiki/Promises">Promises/A</a> has been implemented in several major frameworks, and appears to be becoming the <em>defacto standard</em>. In any case, the basic concepts are the same: 1) Promises act as a placeholder for a result or error, 2) they provide a way to be notified when the actual result has materialized, or when a failure has occurred.)</p>
-
-<h1>The Canonical XHR Example</h1>
-
-<p>In the case of an XHR Get, the value we care about is the content of the url we&rsquo;re fetching.  We know that XHR is an asynchonous operation, and that the value won&rsquo;t be available immediately.  That fits the definition of a Promise perfectly.</p>
-
-<p>Imagine that we have an XHR library that <em>immediately</em> returns a Promise, as a placeholder for the content, instead of requiring us to pass in a callback.  We could rewrite our asynchronous <code>thisMightFail</code> function from Part 1 to look like this:</p>
-
-<p><script src="https://gist.github.com/1886889.js"></script></p>
-
-<p>(Note that several popular Javascript libraries, including <a href="http://dojotoolkit.org/reference-guide/dojo/xhrGet.html">Dojo</a> (see also this <a href="http://dojotoolkit.org/documentation/tutorials/1.6/deferreds/">great article on Dojo&rsquo;s Deferred</a> by <a href="https://twitter.com/bryanforbes">@bryanforbes</a>) and <a href="http://api.jquery.com/Types/#jqXHR">jQuery</a>, implement XHR operations using promises)</p>
-
-<p>Now, we can return the Promise placeholder <em>as if it were the real result</em>, and our asynchronous <code>thisMightFail</code> function looks very much like a plain old synchronous, call-and-return operation.</p>
-
-<h1>Taking Back the Stack</h1>
-
-<p>In a non-callback world, results and errors flow back <em>up</em> the call stack.  This is expected and familiar.  In a callback-based world, as we&rsquo;ve seen, results and errors no longer follow that familiar model, and instead, callbacks must flow <em>down</em>, deeper into the stack.</p>
-
-<p>By using Promises, we can restore the familiar call-and-return programming model, and remove the callbacks.</p>
-
-<h2>Restoring Call-and-return</h2>
-
-<p>To see how this works, let&rsquo;s start with a simplified version of the <a href="https://gist.github.com/1790802">synchronous <code>getTheResult</code> function</a> from <a href="/async-programming-part-1-it-s-messy">Part 1</a>, without try/catch so that exceptions will always propagate up the call stack.</p>
-
-<p><script src="https://gist.github.com/1886893.js"></script></p>
-
-<p>Now let&rsquo;s introduce the <em>asynchronous</em> <code>thisMightFail</code> from above that uses our Promise-based XHR lib.</p>
-
-<p><script src="https://gist.github.com/1886896.js"></script></p>
-
-<p>Using Promises, <code>getTheResult()</code> is identical in the synchronous and asynchronous cases!  And in both, the successful result <em>or the failure</em> will propagate <em>up</em> the stack to the caller.</p>
-
-<h2>Removing Callbacks</h2>
-
-<p>Notice also that there are no callbacks or errbacks (or alwaysbacks!) being passed down the callstack, and they haven&rsquo;t polluted any of our function signatures.  By using Promises, our functions now <em>look and act</em> like the familiar, synchronous, call-and-return model.</p>
-
-<h2>Done?</h2>
-
-<p>We&rsquo;ve used Promises to refactor our simplified <code>getTheResult</code> function, and fix two of the problems we identified in Part 1.  We&rsquo;ve:</p>
-
-<ol>
-<li>restored call-and-return</li>
-<li>removed callback/errback/alwaysback parameter propagation</li>
-</ol>
-
-
-<p>But, what does this mean for callers of <code>getTheResult</code>?  Remember that we&rsquo;re returning a Promise, and eventually, either the successful result (the result of the XHR) or an error will materialize into the Promise placeholder, at which point the caller will want to take some action.</p>
-
-<h1>What about the Caller?</h1>
-
-<p>As mentioned above, Promises provide an API for being notified when either the result or failure becomes available.  For example, in the proposed Promises/A spec, a Promise has a <code>.then()</code> method, and many promise libraries provide a <code>when()</code> function that achieves the same goal.</p>
-
-<p>First, let&rsquo;s look at what the calling code might look like when using the callback-based approach:</p>
-
-<p><script src="https://gist.github.com/1886899.js"></script></p>
-
-<p>Now, let&rsquo;s look at how the caller can use the Promise that <code>getTheResult</code> returns using the Promises/A <code>.then()</code> API.</p>
-
-<p><script src="https://gist.github.com/1886909.js"></script></p>
-
-<p>Or, more compactly:</p>
-
-<p><script src="https://gist.github.com/1886911.js"></script></p>
-
-<p><img src="http://briancavalier.s3.amazonaws.com/blog/funny-surprised-owl-WHAT.jpg" alt="WAT" /></p>
-
-<p>(Image from <a href="http://themetapicture.com/wat/">The Meta Picture</a>)</p>
-
-<p>Wasn&rsquo;t the whole point of this Promises stuff to <em>avoid using callbacks</em>?  And here we are using them?!?</p>
-
-<h1>Stay with Me</h1>
-
-<p>In Javascript, Promises are implemented using callbacks because there is no language-level construct for dealing with asynchrony.  Callbacks are a necessary <em>implementation detail</em> of Promises.  If Javascript provided, or possibly when it does provide in the future, other language constructs, promises could be implemented differently.</p>
-
-<p>However, there are several important advantages in using Promises over the deep callback passing model from Part 1.</p>
-
-<p>First, our function signatures are sane.  We have removed the need to add callback and errback parameters to every function signature from the caller down to the XHR lib, and only the caller who is ultimately interested in the result needs to mess with callbacks.</p>
-
-<p>Second, the Promise API standardizes callback passing.  Libraries all tend to place callbacks and errbacks at different positions in function signatures.  Some don&rsquo;t even accept an errback.  <em>Most</em> don&rsquo;t accept an alwaysback (i.e. &ldquo;finally&rdquo;).  We can rely on the Promise API instead of <em>many potentially different library APIs</em>.</p>
-
-<p>Third, a Promise makes a set of <em>guarantees</em> about how and when callbacks and errbacks will be called, and how return values and exceptions thrown by callbacks will be handled.  In a non-Promise world, the multitude of callback-supporting libraries and their many function signatures also means a multitude of different behaviors:</p>
-
-<ol>
-<li>Are your callbacks allowed to return a value?</li>
-<li>If so, what happens to that value?</li>
-<li>Do all libraries allow your callback to throw an exception?  If so, what happens to it?  Is it silently eaten?</li>
-<li>If your callback does throw an exception, will your errback be called, or not?</li>
-</ol>
-
-
-<p>&hellip; and so on &hellip;</p>
-
-<p>So, while one way to think of Promises is as a standard API to callback registration, they also provide standard, predictable <em>behavior</em> for how and when a callback will be called, exception handling, etc.</p>
-
-<h1>What about try/catch/finally?</h1>
-
-<p>Now that we&rsquo;ve restored call-and-return and removed callbacks from our function signatures, we need a way to handle failures.  Ideally, we&rsquo;d like to use try/catch/finally, or at least something that <em>looks and acts just like it</em> and works in the face of asynchrony.</p>
-
-<p>In Part 3, we&rsquo;ll put the final piece of the puzzle into place, and see how to model try/catch/finally using Promises.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/async-programming-part-1-it-s-messy/">Async Programming Part 1: It&#8217;s Messy</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -855,472 +693,38 @@
   
 
 
-<time datetime="2012-02-10T00:00:00-05:00" pubdate data-updated="true">Feb 10<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h1>Exceptions and try/catch</h1>
-
-<p>Exceptions and try/catch are an intuitive way to execute operations that may fail.  They allow us to recover from the failure, or to let the failure propagate up the call stack to a caller by either not catching the exception, or explicitly re-throwing it.</p>
-
-<p>Here&rsquo;s a simple example:</p>
-
-<p><script src="https://gist.github.com/1790802.js"></script></p>
-
-<p>In this case, <code>getTheResult</code> handles the case where <code>thisMightFail</code> does indeed fail and throws an <code>Error</code> by catching the <code>Error</code> and calling <code>recoverFromFailure</code> (which could return some default result, for example).  This works because <code>thisMightFail</code> is <em>synchronous</em>.</p>
-
-<h1>Going Async</h1>
-
-<p>What if <code>thisMightFail</code> is <em>asynchronous</em>?  For example, it may perform an asynchronous XHR to fetch the result data:</p>
-
-<p><script src="https://gist.github.com/1790814.js"></script></p>
-
-<p>Now it&rsquo;s impossible to use try/catch, and we have to supply a callback and errback to handle the success and failure cases.  That&rsquo;s pretty common in Javascript applications, so no big deal, right?  But wait, now <code>getTheResult</code> <em>also</em> has to change:</p>
-
-<p><script src="https://gist.github.com/1790818.js"></script></p>
-
-<p>At the very least, <code>callback</code> (and possibly <code>errback</code>, read on) must now be added to <em>every function signature</em> all the way back up to the caller who is ultimately interested in the result.</p>
-
-<h2>More Async</h2>
-
-<p>If <code>recoverFromFailure</code> is also asynchronous, we have to add yet another level of callback nesting:</p>
-
-<p><script src="https://gist.github.com/1790822.js"></script></p>
-
-<p>This also raises the question of what to do if <code>recoverFromFailure</code> itself fails.  When using synchronous try/catch, <code>recoverFromFailure</code> could simply throw an <code>Error</code> and it would propagate up to the code that called <code>getTheResult</code>.  To handle an asynchronous failure, we have to introduce another <code>errback</code>, resulting in both <code>callback</code> and <code>errback</code> infiltrating every function signature from <code>recoverFromFailure</code> all the way up to a caller who must ultimately supply them.</p>
-
-<p>It may also mean that we have to check to see if callback and errback were actually provided, and if they might throw exceptions:</p>
-
-<p><script src="https://gist.github.com/1790826.js"></script></p>
-
-<p>The code has gone from a simple try/catch to deeply nested callbacks, with <code>callback</code> and <code>errback</code> in every function signature, plus additional logic to check whether it&rsquo;s safe to call them, and, ironically, <em>two try/catch blocks</em> to ensure that <code>recoverFromFailure</code> can indeed recover from a failure.</p>
-
-<h2>And what about finally?</h2>
-
-<p>Imagine if we were also to introduce <code>finally</code> into the mix&mdash;things would need to become even more complex.  There are essentially two options, neither of which is as simple and elegant as the language-provided <code>finally</code> clause. We could: 1) add an <code>alwaysback</code> callback to all function signatures, with the accompanying checks to ensure it is safely callable, or 2) always write our callback/errback to handle errors internally, and be sure to invoke <code>alwaysback</code> in all cases.</p>
-
-<h1>Summary</h1>
-
-<p>Using callbacks for asynchronous programming changes the basic programming model, creating the following situation:</p>
-
-<ol>
-<li>We can no longer use a simple call-and-return programming model</li>
-<li>We can no longer handle errors using try/catch/finally</li>
-<li>We must add callback and errback parameters to every function signature that <em>might eventually</em> lead to an asynchronous operation</li>
-</ol>
-
-
-<p>We can do better. There is another model for asynchronous programming in Javascript that more closely resembles standard call-and-return, follows a model more like try/catch/finally, and doesn&rsquo;t force us to add two callback parameters to a large number of functions.</p>
-
-<p>Next, we&rsquo;ll look at <strong>Promises</strong>, and how they help to bring asynchronous programming back to a model that is simpler and more familiar.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
+<time datetime="2013-05-03T07:44:00-04:00" pubdate data-updated="true">May 3<span>rd</span>, 2013</time>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/oocss-slides-and-more-from-the-jquery-pgh-meetup/">OOCSS Slides and More From the jQuery Pgh Meetup</a></h1>
-    
-    
-      <p class="meta">
-        
 
-
-
-
-
-
-
-
+<span class="categories">
   
+    <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/promises/'>promises</a>
+  
+</span>
 
 
-<time datetime="2011-02-04T00:00:00-05:00" pubdate data-updated="true">Feb 4<span>th</span>, 2011</time>
-        
-      </p>
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><p>I hope everyone who attended last night&rsquo;s jBurgh meetup had as much fun as I did, and enjoyed my talk on OOCSS.  I thought it was a great low-key event, and I have to say that the discussion after the presentation and hanging around talking to everyone were the best parts.</p>
-
-<p>My <a href="http://slidesha.re/f2dc6r" title="OOCSS for Javascript pirates at jQueryPgh meetup">slides</a> are up on slideshare, and if you were at the meetup, I&rsquo;d really appreciate your taking a minute to <a href="http://spkr8.com/t/5513" title="OOCSS for JavaScript Pirates | SpeakerRate">rate my talk</a>, and (especially!) leave a comment about how it could be improved.</p>
-
-<p>If you&rsquo;re interested in getting more background on OOCSS, I encourage you to check out Nicole&rsquo;s <a href="http://www.slideshare.net/stubbornella/object-oriented-css" title="Object Oriented CSS">slides</a> and <a href="http://www.stubbornella.org/content/2009/03/23/object-oriented-css-video-on-ydn/" title="Stubbornella  » Blog Archive   » Object Oriented CSS video on YDN">video</a>.  I&rsquo;ve also written a few articles that dig deeper into some of the concepts in last night&rsquo;s talk, such as OOCSS inheritance, why <code>.css()</code> is bad, and OOCSS Antipatterns:</p>
-
-<ul>
-<li><a href="http://blog.briancavalier.com/building-a-digital-clock-with-oocss-and-mvc" title="Building a digital clock with OOCSS and MVC - technorthodox">Building a digital clock with OOCSS and MVC</a></li>
-<li><a href="http://blog.briancavalier.com/the-oo-in-oocss-and-direct-style-manipulation-0" title="The OO in OOCSS, and direct style manipulation - technorthodox">The OO in OOCSS, and direct style manipulation</a></li>
-<li><a href="http://blog.briancavalier.com/oocss-antipatterns-analog-clock-theme-using-o" title="OOCSS Antipatterns: Analog clock theme using only CSS - technorthodox">OOCSS Antipatterns: Analog clock theme using only CSS</a></li>
-</ul>
-
-
-<p>You can also check out the <a href="http://briancavalier.com/digital-clock/" title="CSS3 Digital Clock">digital clock demo</a>, including these other versions:</p>
-
-<ul>
-<li><a href="http://briancavalier.com/digital-clock/analog/" title="CSS3 Digital Clock">Analog</a> &ndash; remember this is an antipattern (see above), no matter how cool it seems!</li>
-<li><a href="http://briancavalier.com/digital-clock/explode.html" title="CSS3 Digital Clock">JQCon explode</a> &ndash; we did this mod live onstage at JQCon</li>
-<li>Daniel Lamb&rsquo;s <a href="http://daniellmb.com/binary-clock.htm" title="MVC OOCSS Binary Clock">binary clock mod</a> &ndash; he points directly to my JS view controller (view source to check it out), and just modded the HTML and CSS.  Now that&rsquo;s separation of concerns FTW.</li>
-</ul>
-
-
-<p>For more deep diving along with some excellent code examples and comment discussion, I also recommend reading John Hann&rsquo;s post on <a href="http://unscriptable.com/index.php/2010/08/31/cujo-js-oojs-oocss-and-oohtml-part-1/" title="cujo.js — OOJS, OOCSS, and OOHTML — Part 1 (OOCSS for Engineers) | Unscriptable.com">OOCSS for Engineers</a>.</p>
-
-<p>At the end of the presentation, I mentioned that I&rsquo;m working on OOCSS design patterns for web applications.  My plan is to post more information soon about the ones mentioned in the slides (with example code), as well as others, so stay tuned.</p>
-
-<p>Thanks to <a href="http://twitter.com/#!/b4nn0n" title="Chris Bannon on Twitter">Chris Bannon</a> and <a href="http://wijmo.com/" title="Wijmo - jQuery UI Widgets">Wijmo</a> for organizing and sponsoring, to <a href="http://www.hackpittsburgh.org/" title="Hack Pittsburgh">HackPittsburgh</a> for lending us their space, and to everyone who attended!  I had a blast, and I&rsquo;m already looking forward to the next meetup.</p>
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://briancavalier.github.io/async-programming-part-3-finally/" data-via="" data-counturl="http://briancavalier.github.io/async-programming-part-3-finally/" >Tweet</a>
+  
+  
+  
 </div>
-  
-  
 
-
-    </article>
-  
-  
-    <article>
+    
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/oocss-at-the-next-jquery-pgh-meetup/">OOCSS at the Next jQuery Pgh Meetup</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-01-31T00:00:00-05:00" pubdate data-updated="true">Jan 31<span>st</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I&rsquo;ll be speaking about OOCSS at the next <a href="https://twitter.com/jquerypgh">jQuery Pittsburgh</a> meetup, this Thursday (2/3) at 6:30pm at <a href="http://www.hackpittsburgh.org" title="Hack Pittsburgh">HackPittsburgh</a>.  I&rsquo;m planning to present some similar material as John Hann and I presented at jQCon in September, but I&rsquo;ll also be including an expanded section on how to get started with OOCSS, as well as a section on OOCSS antipatterns.</p>
-
-<p>Thanks to <a href="https://twitter.com/b4nn0n">Chris Bannon</a> from <a href="http://wijmo.com/" title="Wijmo - jQuery UI Widgets">Wijmo</a> for organizing the meetup, and for inviting me to speak.  Hope to see you there!</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
+        <a class="basic-alignment left" href="/async-programming-part-2-promises/" title="Previous Post: Async Programming Part 2: Promises">&laquo; Async Programming Part 2: Promises</a>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/simple-oocss-slideshows/">Simple OOCSS Slideshows</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-01-21T00:00:00-05:00" pubdate data-updated="true">Jan 21<span>st</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I read <a href="http://www.computedstyle.com/2010/12/hiring-front-end-engineers.html" title="computed style: Hiring Front-End Engineers">this article</a> recently, and decided to solve the problem the author proposes in point #3 using OOCSS techniques.</p>
-
-<p>Here you go: <a href="http://dl.dropbox.com/u/259524/code/slideshow/index.html" title="OOCSS Slideshows">OOCSS Slideshows</a>.</p>
-
-<p>You might be saying, &ldquo;Good grief, all that CSS is overkill!&rdquo;, and be tempted to think that just using <code>image.style.display = 'none'</code> is good enough.  Try implementing those 3 effects in plain Javascript &hellip; you probably wouldn&rsquo;t get it right&mdash;I know I probably wouldn&rsquo;t.</p>
-
-<p>Or maybe you&rsquo;re thinking that you&rsquo;d just use jQuery, Dojo, or your favorite effects library to do it.  Putting aside the fact that the original interview question stipulated no libraries, the advantage of an OOCSS approach, as I&rsquo;ve <a href="http://blog.briancavalier.com/the-oo-in-oocss-and-direct-style-manipulation-0" title="The OO in OOCSS, and direct style manipulation - technorthodox">written about at length before</a>, is separation of concerns, and all its related benefits.</p>
-
-<p>Using an MVC and OOCSS approach <em>puts control of the slideshow transitions into the hands of the designer, and changes to the transitions require zero Javascript changes</em>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/dojo-completion-statement-parsing/">Dojo Completion Statement Parsing</a></h1>
-    
-    
-      <p class="meta">
-        
+    </p>
+  </footer>
+</article>
 
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-11-29T00:00:00-05:00" pubdate data-updated="true">Nov 29<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p style="margin-top: 0px;">One of the things on my&nbsp;<a href="http://blog.briancavalier.com/textmate-dojo-completions-dojorequire-and-doj" title="TextMate Dojo completions: dojo.require and dojo.query - technorthodox" style="color: #0d2681; margin-top: 0px;">Dojo completion hitlist</a>&nbsp;was handling multiline statements, especially&nbsp;<code style="font-size: 12px; font-family: LuxiMono, Bitstream Vera Sans Mono, Monaco, Courier New, monospace; color: #1c360c;">dojo.query</code>&nbsp;chains, since I tend to break them into multiple lines when chaining more than 1 or 2&nbsp;<code style="font-size: 12px; font-family: LuxiMono, Bitstream Vera Sans Mono, Monaco, Courier New, monospace; color: #1c360c;">NodeList</code>&nbsp;function calls (and I&rsquo;m betting most folks do that, too). While thinking about how to handle this, I came to the conclusion that there were basically three ways I could approach it:</p>
-<ol>
-<li style="margin-top: 0px;">Implement a real Javascript parser that is liberal enough to handle incomplete statements (e.g. it has to handle the statement you&rsquo;re trying to complete!), or</li>
-<li>Integrate an existing parser that is liberal enough to handle incomplete statements (I have no idea if a&nbsp;<em style="margin-top: 0px;">liberal</em>&nbsp;open source JS parser exists), or</li>
-<li>Implement something simpler and easier that covers most or all of what I think of as&nbsp;<em style="margin-top: 0px;">common cases</em>.</li>
-</ol>
-<p>I decided to go with #3. In fact, this is my general rule of thumb for the completion bundle in the short and medium term. I want to make something that is both useful, and something I can actually release since I&rsquo;m only working on it a few hours each week. An unreleased, vaporware completion bundle is far less cool than a released one that works 80% of the time.</p>
-<p>Here are a few shots of the multiline statement parser in action, completing a&nbsp;<code style="font-size: 12px; font-family: LuxiMono, Bitstream Vera Sans Mono, Monaco, Courier New, monospace; color: #1c360c; margin-top: 0px;">dojo.query</code>chain. Notice also, in the last shot, it guesses correctly that I am starting a new statement, even though I didn&rsquo;t end the previous one with a semicolon. However, it&rsquo;s not perfect, and will almost certainly break under less common conditions. I&rsquo;ve tried, though, to abstract the parser from the completion code in a way that allows the parser to be improved when I find cases where it breaks.</p>
-<ol>
-<li><img src="/imgs/2010-11-29-dojo-completion-statement-parsing/post3-1.png"></li>
-<li><img src="/imgs/2010-11-29-dojo-completion-statement-parsing/post3-2.png"></li>
-<li><img src="/imgs/2010-11-29-dojo-completion-statement-parsing/post3-3.png"></li>
-<li><img src="/imgs/2010-11-29-dojo-completion-statement-parsing/post3-4.png"></li>
-<li><img src="/imgs/2010-11-29-dojo-completion-statement-parsing/post3-5.png"></li></ol>
-
-<p>&nbsp;</p>
 </div>
-  
-  
 
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/textmate-dojo-completions-dojo-require-and-dojo-query/">TextMate Dojo Completions: dojo.require and dojo.query</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-11-16T00:00:00-05:00" pubdate data-updated="true">Nov 16<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><div>
-<p style="margin-top: 0px;">Last week, I started thinking about what features I&rsquo;d want in the&nbsp;<a href="http://blog.briancavalier.com/dojo-autocomplete-for-textmate">TextMate&nbsp;Dojo&nbsp;completion bundle</a> in order to feel good about calling it releasable. I made a list, and started knocking them down. Here are a few that I managed to tackle over the past week:</p>
-<ol>
-<li style="margin-top: 0px;">It scans&nbsp;<em style="margin-top: 0px;">and executes</em>&nbsp;<code style="font-size: 12px; font-family: LuxiMono, Bitstream Vera Sans Mono, Monaco, Courier New, monospace; color: #1c360c;">dojo.require()</code>s in the current file and adds their symbols to the completion context.</li>
-<li>It recognizes when you are typing&nbsp;<em style="margin-top: 0px;">inside</em>&nbsp;a&nbsp;<code style="font-size: 12px; font-family: LuxiMono, Bitstream Vera Sans Mono, Monaco, Courier New, monospace; color: #1c360c;">dojo.require()</code>&nbsp;and completes dojo package names instead of functions and properties.</li>
-<li>It recognizes when you are in a&nbsp;<code style="font-size: 12px; font-family: LuxiMono, Bitstream Vera Sans Mono, Monaco, Courier New, monospace; color: #1c360c; margin-top: 0px;">dojo.query</code>&nbsp;chain and completes NodeList functions while you&rsquo;re in the chain.</li>
-<li>Because it understands both&nbsp;<code style="font-size: 12px; font-family: LuxiMono, Bitstream Vera Sans Mono, Monaco, Courier New, monospace; color: #1c360c; margin-top: 0px;">dojo.require</code>&nbsp;and&nbsp;<code style="font-size: 12px; font-family: LuxiMono, Bitstream Vera Sans Mono, Monaco, Courier New, monospace; color: #1c360c;">dojo.query</code>, it will complete functions from NodeList mixins, such as&nbsp;<code style="font-size: 12px; font-family: LuxiMono, Bitstream Vera Sans Mono, Monaco, Courier New, monospace; color: #1c360c;">dojo.NodeList-fx</code>, that you&rsquo;ve&nbsp;<code style="font-size: 12px; font-family: LuxiMono, Bitstream Vera Sans Mono, Monaco, Courier New, monospace; color: #1c360c;">dojo.require</code>d in the current file.</li>
-</ol>
-<h2 style="color: #222222; text-shadow: #dddddd 3px 3px 5px;">How does it do that?</h2>
-<p>In a word: Javascript. I&rsquo;ll be posting more about this later, once the first release is ready.</p>
-<h2 style="color: #222222; text-shadow: #dddddd 3px 3px 5px;">A note about performance</h2>
-<p>Any completion framework has to be fast. I&rsquo;m ruthless when it comes to development tools, and I&rsquo;ll bet you are too. If something slows me down, I stop using it. If the pain outweighs the benefits, it&rsquo;s gone. So, one of my goals is to make sure this bundle is as fast as it can be.</p>
-<p>The current performance is very good on my laptop. The completion popup is nearly instantaneous, even with&nbsp;<code style="font-size: 12px; font-family: LuxiMono, Bitstream Vera Sans Mono, Monaco, Courier New, monospace; color: #1c360c; margin-top: 0px;">dojo.require</code>&nbsp;scanning, and hundreds of potential completions. That said, I&rsquo;m using the most recent MacBook Pro rev with 8g RAM and an SSD. I realize that may not be the most common setup, so I will be testing it with other setups to make sure it doesn&rsquo;t suck.</p>
-<h2 style="color: #222222; text-shadow: #dddddd 3px 3px 5px;">I can haz it?</h2>
-<p>A few folks have asked when they can get the bundle. Since it&rsquo;s a side project, I don&rsquo;t want to give a date. I&rsquo;ll release an initial version when I feel it&rsquo;s at the point that I&rsquo;d actually use it, and I can tell you that it&rsquo;s getting close :)</p>
-<p>For now, here are a few more teasers that show the new stuff in action.</p>
-</div>
-<ol>
-<li><img src="/imgs/2010-11-16-textmate-dojo-completions-dojo-require-and-dojo-query/1.png"></li>
-<li><img src="/imgs/2010-11-16-textmate-dojo-completions-dojo-require-and-dojo-query/2.png"></li>
-<li><img src="/imgs/2010-11-16-textmate-dojo-completions-dojo-require-and-dojo-query/3.png"></li>
-<li><img src="/imgs/2010-11-16-textmate-dojo-completions-dojo-require-and-dojo-query/4.png"></li>
-<li><img src="/imgs/2010-11-16-textmate-dojo-completions-dojo-require-and-dojo-query/5.png"></li>
-<li><img src="/imgs/2010-11-16-textmate-dojo-completions-dojo-require-and-dojo-query/6.png"></li>
-<li><img src="/imgs/2010-11-16-textmate-dojo-completions-dojo-require-and-dojo-query/7.png"></li></ol>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/dojo-autocomplete-for-textmate/">Dojo Autocomplete for TextMate</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-11-08T00:00:00-05:00" pubdate data-updated="true">Nov 8<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>One of the biggest complaints I hear about&nbsp;<a href="http://macromates.com" title="Macromates, makers of TextMate">TextMate</a>&nbsp;is that it doesn&#8217;t have some sort of native intellisense, and doesn&#8217;t do code completion. &nbsp;Those are typically features provided by &#8220;bigger&#8221; IDEs. &nbsp;TextMate started life as a text editor, and has had different goals than other IDEs, so even though TextMate has grown closer to full-blown IDE over the past few years (thanks to lots of great community bundle contributions), it&#8217;s not really hard to understand why it hasn&#8217;t provide those features natively.</p>
-<p>It turns out, though, that TextMate provides some builtin help for rolling your own completions, and a lot of folks have done that for various languages and platforms. &nbsp;I decided to take a crack at it for&nbsp;<a href="http://dojotoolkit.org/" title="Dojo toolkit">Dojo</a>&nbsp;as a part of a new, simplified Dojo bundle I&#8217;ve been working on. &nbsp;Here are a couple teaser screenshots of what I have so far.</p>
-<p>I&#8217;m not ready to post the bundle yet, but I&#8217;m actively working on it, so I hope to have an initial version ready within the next couple of weeks.</p>
-<ol>
-<li><img src="/imgs/2010-11-08-dojo-autocomplete-for-textmate/dojo-autocomplete1.png"></li>
-<li><img src="/imgs/2010-11-08-dojo-autocomplete-for-textmate/dojo-autocomplete2.png"></li>
-<li><img src="/imgs/2010-11-08-dojo-autocomplete-for-textmate/dojo-autocomplete3.png"></li>
-<li><img src="/imgs/2010-11-08-dojo-autocomplete-for-textmate/dojo-autocomplete4.png"></li></ol>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/oocss-antipatterns-analog-clock-theme-using-only-css/">OOCSS Antipatterns: Analog Clock Theme Using Only CSS</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-10-26T00:00:00-04:00" pubdate data-updated="true">Oct 26<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>You asked for it, and you got it.  Several people asked me after the digital clock demo at jQCon if I thought it was possible to create an analog theme for the clock using only CSS.  I had wondered this as well, but came to the conclusion that it was impossible, given the current HTML structure.  So, that&rsquo;s the answer I gave at the conference.</p>
-
-<p>The very next day, I thought of a way to do it, so <a href="http://briancavalier.com/digital-clock/analog">here&rsquo;s an analog theme</a> (<a href="http://github.com/briancavalier/Sample-Code/tree/analog/digital-clock" title="digital-clock at analog from briancavalier's Sample-Code - GitHub">source on github</a>) for the digital clock done entirely in CSS.</p>
-
-<p><script src="https://gist.github.com/645340.js"></script></p>
-
-<p>First, note a couple things:</p>
-
-<ol>
-<li>The first hour, minute, and second digits are hidden.</li>
-<li>The second hour, minute, and second digits have been styled to look like analog clock hands&mdash;i.e. long thin rectangles, and have been anchored at the center of the analog clock face.</li>
-</ol>
-
-
-<p>The key is the use (in fact, <em>abuse</em>, read on!) of the immediate sibling selector to rotate the clock hands to the correct position, using CSS3 transforms.  For example, the line above says when the first hour digit is a &ldquo;0&rdquo;, and the second hour digit is also a &ldquo;1&rdquo; rotate the second digit (remember, it&rsquo;s been styled to look like an analog clock hand) by 30°.  Each hour represents 30° (360 / 12 = 30), so looking at the rest of the hour selectors, you can see how it works.</p>
-
-<p>Similarly, the minutes and seconds are rotated using the immediate sibling selector.  The only difference is the degrees, since 360 / 60 = 6° per minute/second.</p>
-
-<p>Ok, neat, it works, but &hellip;</p>
-
-<h2>How <em>not</em> to build an analog clock</h2>
-
-<p>At this point, you&rsquo;re probably saying to yourself (and if you&rsquo;re not, <em>you should be</em>) &ldquo;This is a terrible way to build an analog clock&rdquo;.  You are absolutely right.  There are many problems with this, and I&rsquo;d even go so far as to call the whole thing an <a href="http://en.wikipedia.org/wiki/Anti-pattern" title="Anti-pattern - Wikipedia, the free encyclopedia">antipattern</a>.</p>
-
-<p>From the HTML element hierarchy, to the CSS classnames, to the time computations, most everything tailored to represent an LED-based digital clock.</p>
-
-<p>However, the point of this little exercise was not to find the best way to engineer an analog clock.  The point was to answer the question &ldquo;could it be done?&rdquo;.  But maybe we can learn something about OOCSS anyway.</p>
-
-<h2>There is something to be learned here</h2>
-
-<p>As the saying goes, &ldquo;when all you have is a hammer, everything looks like a nail&rdquo;, and in this case of trying to use <em>only</em> OOCSS to transform the digital clock into analog, there&rsquo;s certainly some overly-ambitious hammering going on.</p>
-
-<p>If the HTML is poorly-suited to the task at hand, trying to apply OOCSS on top of it will probably just make things worse.  In fact, in this example, the HTML and CSS are fighting each other rather than working together.</p>
-
-<p>OOCSS is not just about CSS, it&rsquo;s about <em>identifying objects in the view first</em> (<a href="http://slidesha.re/oocss-jqcon-slides" title="OOCSS for JavaScript Pirates jQCon Boston">as John said in our presentation, &ldquo;ignore the HTML!&rdquo;</a>), and then structuring HTML and CSS around the containers, content, identity, and states of those objects.</p>
-
-<p>The fact is that the objects in this clock are LED digits, not analog clock hands, and some mildly clever CSS doesn&rsquo;t change that.  Conversely, this bastardization means that the hands of the analog clock have the classes &ldquo;display-area&rdquo; and &ldquo;digit&rdquo;, as well as &ldquo;d0&rdquo; &ndash; &ldquo;d9&rdquo;, none of which seem like logical choices for the hands of an analog clock!</p>
-
-<p><strong>Antipattern</strong>: In any reasonably complex system, writing HTML and CSS first is an antipattern.</p>
-
-<p><strong>What to do?</strong>: Break out the wireframes, gather around the whiteboard, and start identifying objects!  List their states.  Talk about ways to translate them into well-structured HTML containers and content.</p>
-
-<p>One of the results of this object/HTML/CSS mismatch is <em>state explosion</em>, aka <a href="http://en.wikipedia.org/wiki/Combinatorial_explosion" title="Combinatorial explosion - Wikipedia, the free encyclopedia">combinatorial explosion</a>.  There are 72 CSS rules needed just to rotate the clock hands, whereas there are only 10 rules for the original digital clock LED digits.  That certainly qualifies as state explosion, and just looking at the analog rules should give you an uneasy feeling that something is wrong.</p>
-
-<p>In fact, modeling any analog clock, not just this bad example of an analog clock, as discrete OOCSS states seems wrong.  Consider also the progress bar example John gave during our talk.  Progress bars, in most cases, represent a continuous function rather than a discrete function, and therefore can require an infinite number of states to model their possible values&mdash;e.g. 30%, 30.1%, 30.15%, and so on.</p>
-
-<p><strong>Antipattern</strong>: Trying to model continuous values with OOCSS state is an antipattern.</p>
-
-<p><strong>What to do?</strong>: Use a mechanism better suited to continuous values/functions, such as a vector library, or yes, even direct (but well abstracted!) style manipulation.</p>
-
-<p>One other thing that should be bothering you about this analog clock is that nearly half the HTML elements are <em>permanently hidden</em> by the analog theme&rsquo;s CSS.  This can be an indication that you&rsquo;ve misidentified the view objects.  In this case, I think it&rsquo;s pretty obvious that the objects I originally identified when creating the digital clock, that is, active digits composed of lit or unlit LED bars, simply are not present in the analog clock.</p>
-
-<p><strong>Antipattern</strong>: Having sections of permanently hidden HTML is an antipattern.</p>
-
-<p><strong>What to do?</strong>: Review your objects and wireframes.  You may have misidentified some objects, or your application may have changed significantly enough over time that the objects you had originally, and correctly, identified are no longer present.  Either way, it&rsquo;s time to revisit the wireframes and refactor.</p>
-
-<p>Trying to shoehorn an analog display into the digital clock was fun, but more importantly, I think it helped to identify some OOCSS antipatterns.  Hopefully these will help us all avoid some pitfalls!</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  <div class="pagination">
-    
-      <a class="prev" href="/blog/page/2/">&larr; Older</a>
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -1336,7 +740,7 @@
       </li>
     
       <li class="post">
-        <a href="/async-programming-part-1-it-s-messy/">Async Programming Part 1: It&#8217;s Messy</a>
+        <a href="/async-programming-part-1-it-s-messy/">Async Programming Part 1: It's Messy</a>
       </li>
     
       <li class="post">
@@ -1356,6 +760,7 @@
 
   
 </aside>
+
 
     </div>
   </div>
