@@ -139,7 +139,7 @@
 
 <p>As we&rsquo;ve seen, attempting to simulate even the <code>try/catch</code> via a callback-based approach is fraught with pitfalls.  Adding the notion of <code>finally</code>, that is, <em>guaranteed cleanup</em>, only makes things worse.</p>
 
-<p>Using Promises, we can use an approach that is analogous to this familiar <code>try/catch/finally</code> idiom, without deep callback structures.</p>
+<p>Using Promises, we can build an approach that is analogous to this familiar <code>try/catch/finally</code> idiom, without deep callback structures.</p>
 
 <h2>Try/catch</h2>
 
@@ -211,17 +211,17 @@
 
 <p>The other important behavior is:</p>
 
-<p>A handler may produce either a successful result by <code>return</code>ing a value, or an error by <code>throw</code>ing or <code>return</code>ing a rejected promise.</p>
+<p>A handler may produce either a successful result by returning a value, or an error by throwing or returning a rejected promise.</p>
 
-<p>We <em>are</em> supplying an <code>onRejected</code> handler: <code>recoverFromFailure</code>.  That means that any error produced by <code>thisMightFail</code> will be provided to <code>recoverFromFailure</code>.  Just like the <code>catch</code> statement in the synchronous example, <code>recoverFromFailure</code> can handle the error and <code>return</code> a successful result, <em>or</em> it can produce an error by throwing or returning a rejected Promise.</p>
+<p>We <em>are</em> supplying an <code>onRejected</code> handler: <code>recoverFromFailure</code>.  That means that any error produced by <code>thisMightFail</code> will be provided to <code>recoverFromFailure</code>.  Just like the <code>catch</code> statement in the synchronous example, <code>recoverFromFailure</code> can handle the error and <code>return</code> a successful result, <em>or</em> it can produce an error by throwing or by returning a rejected Promise.</p>
 
 <p>Now we have a fully asynchronous construct that behaves like its synchronous analog, and is just as easy to write.</p>
 
 <h3>Adding some sugar</h3>
 
-<p>Hmmm, but what about that <code>null</code>?  Why should we have to type <code>null</code> everywhere we want to use this asynchronous <code>try/catch</code>-like construct?  Can&rsquo;t we do better?</p>
+<p>Hmmm, but what about that <code>null</code> we&rsquo;re passing as the first param?  Why should we have to type <code>null</code> everywhere we want to use this asynchronous <code>try/catch</code>-like construct?  Can&rsquo;t we do better?</p>
 
-<p>While the primary interface to a Promises/A+ Promise is its <code>then()</code> method, many implementations add convenience methods, built upon <code>then()</code>.  For example, <a href="https://github.com/cujojs/when">when.js</a> Promises provide an <a href="https://github.com/cujojs/when/blob/master/docs/api.md#otherwise"><code>otherwise()</code> method</a> that allows us to write this example more intuitive and compactly:</p>
+<p>While the primary interface to a Promises/A+ Promise is its <code>then()</code> method, many implementations add convenience methods, built, with very little code, upon <code>then()</code>.  For example, <a href="https://github.com/cujojs/when">when.js</a> Promises provide an <a href="https://github.com/cujojs/when/blob/master/docs/api.md#otherwise"><code>otherwise()</code> method</a> that allows us to write this example more intuitive and compactly:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -278,7 +278,7 @@
 <ol>
 <li>will always execute after <code>thisMightFail</code> and/or <code>recoverFromFailure</code></li>
 <li>does not have access to the value returned by <code>thisMightFail</code>, or to the thrown exception (<code>e</code>), or to the value returned by <code>recoverFromFailure</code> <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>.</li>
-<li>cannot, in this case, transform an exception thrown by <code>recoverFromFailure</code> back into a successful result[1].</li>
+<li>cannot, in this case, transform an exception thrown by <code>recoverFromFailure</code> back into a successful result<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>.</li>
 <li><em>can</em> change a successful result (returned by either <code>thisMightFail</code> or <code>recoverFromFailure</code>) into a failure if <code>alwaysCleanup</code> throws an exception.</li>
 <li><em>can</em> substitute a new exception in place of one thrown by <code>recoverFromFailure</code>.  That is, if both <code>recoverFromFailure</code> and <code>alwaysCleanup</code> throw exceptions, the one thrown by <code>alwaysCleanup</code> will propagate to the caller, and the one thrown by <code>recoverFromFailure</code> <em>will not</em>.</li>
 </ol>
@@ -671,6 +671,8 @@
 <ol>
 <li id="fn:1">
 <p>You might be wondering why we want this property.  For this article, we&rsquo;re choosing to try to model <code>finally</code> as closely as possible.  The intention of synchronous <code>finally</code> is to cause <em>side effects</em>, such as closing a file or database connection, and not to transform the result or error by applying a function to it.  Also, passing something that <em>might be a result or might be an error</em> to <code>alwaysCleanup</code> can be a source of hazards without <em>also</em> telling <code>alwaysCleanup</code> what kind of thing it is receiving. The fact that <code>finally</code> doesn&rsquo;t have a &ldquo;parameter&rdquo;, like <code>catch</code> means that the burden is on the developer to grant access to the result or error, usually by storing it in a local variable before execution enters the <code>finally</code>. That approach will work for these promise-based approaches as well.<a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+<li id="fn:2">
+<p>Note that <code>finally</code> <em>is</em> allowed to squelch exceptions by <em>explicitly</em> returning a value.  However, in this case, we are not returning anything explicitly.  I&rsquo;ve never seen a realistic and useful case for squelching an exception that way.<a href="#fnref:2" rev="footnote">&#8617;</a></p></li>
 </ol>
 </div>
 
