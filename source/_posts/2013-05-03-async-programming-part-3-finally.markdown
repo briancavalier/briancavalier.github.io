@@ -32,7 +32,7 @@ function getTheResult() {
 
 As we've seen, attempting to simulate even the `try/catch` via a callback-based approach is fraught with pitfalls.  Adding the notion of `finally`, that is, *guaranteed cleanup*, only makes things worse.
 
-Using Promises, we can use an approach that is analogous to this familiar `try/catch/finally` idiom, without deep callback structures.
+Using Promises, we can build an approach that is analogous to this familiar `try/catch/finally` idiom, without deep callback structures.
 
 ## Try/catch
 
@@ -82,17 +82,17 @@ We're *not* supplying an `onFulfilled` handler when calling `then()`.  This mean
 
 The other important behavior is:
 
-A handler may produce either a successful result by `return`ing a value, or an error by `throw`ing or `return`ing a rejected promise.
+A handler may produce either a successful result by returning a value, or an error by throwing or returning a rejected promise.
 
-We *are* supplying an `onRejected` handler: `recoverFromFailure`.  That means that any error produced by `thisMightFail` will be provided to `recoverFromFailure`.  Just like the `catch` statement in the synchronous example, `recoverFromFailure` can handle the error and `return` a successful result, *or* it can produce an error by throwing or returning a rejected Promise.
+We *are* supplying an `onRejected` handler: `recoverFromFailure`.  That means that any error produced by `thisMightFail` will be provided to `recoverFromFailure`.  Just like the `catch` statement in the synchronous example, `recoverFromFailure` can handle the error and `return` a successful result, *or* it can produce an error by throwing or by returning a rejected Promise.
 
 Now we have a fully asynchronous construct that behaves like its synchronous analog, and is just as easy to write.
 
 ### Adding some sugar
 
-Hmmm, but what about that `null`?  Why should we have to type `null` everywhere we want to use this asyncrhonous `try/catch`-like construct?  Can't we do better?
+Hmmm, but what about that `null` we're passing as the first param?  Why should we have to type `null` everywhere we want to use this asynchronous `try/catch`-like construct?  Can't we do better?
 
-While the primary interface to a Promises/A+ Promise is its `then()` method, many implementations add convenience methods, built upon `then()`.  For example, [when.js](https://github.com/cujojs/when) Promises provide an [`otherwise()` method](https://github.com/cujojs/when/blob/master/docs/api.md#otherwise) that allows us to write this example more intuitive and compactly:
+While the primary interface to a Promises/A+ Promise is its `then()` method, many implementations add convenience methods, built, with very little code, upon `then()`.  For example, [when.js](https://github.com/cujojs/when) Promises provide an [`otherwise()` method](https://github.com/cujojs/when/blob/master/docs/api.md#otherwise) that allows us to write this example more intuitive and compactly:
 
 ```js
 // Async: Using when.js promise.otherwise();
@@ -129,7 +129,7 @@ First, let's note that there are some very interesting things about this seeming
 
 1. will always execute after `thisMightFail` and/or `recoverFromFailure`
 1. does not have access to the value returned by `thisMightFail`, or to the thrown exception (`e`), or to the value returned by `recoverFromFailure` [^finally-no-access].
-1. cannot, in this case, transform an exception thrown by `recoverFromFailure` back into a successful result[1].
+1. cannot, in this case, transform an exception thrown by `recoverFromFailure` back into a successful result[^finally-squelch-error].
 1. *can* change a successful result (returned by either `thisMightFail` or `recoverFromFailure`) into a failure if `alwaysCleanup` throws an exception.
 1. *can* substitute a new exception in place of one thrown by `recoverFromFailure`.  That is, if both `recoverFromFailure` and `alwaysCleanup` throw exceptions, the one thrown by `alwaysCleanup` will propagate to the caller, and the one thrown by `recoverFromFailure` *will not*.
 
@@ -382,10 +382,12 @@ function thisMightFail() {
 }
 ```
 
-## The end? No, just the beginning
+## The end?
 
 Of course, there will always be differences between synchronous and asynchronous execution, but by using Promises, we can narrow the divide.  The synchronous and Promise-based versions we've constructed not only look very similar, they *behave* similarly.  They have similar invariants.  We can reason about them in similar ways.  We can even *refactor* and *test* them in similar ways.
 
 Providing familiar and predictable error handling patterns and composable call-and-return semantics are two powerful aspects of Promises, but they are also only the beginning.  Promises are a building block on which fully asynchronous analogs of many other familiar features can be built easily: higher order functions like [`map`](https://github.com/cujojs/when/blob/master/docs/api.md#whenmap) and [`reduce`](https://github.com/cujojs/when/blob/master/docs/api.md#whenreduce)/`fold`, [parallel and sequential](https://github.com/cujojs/when/blob/master/docs/api.md#concurrency) task execution, and much more.
 
 [^finally-no-access]: You might be wondering why we want this property.  For this article, we're choosing to try to model `finally` as closely as possible.  The intention of synchronous `finally` is to cause *side effects*, such as closing a file or database connection, and not to transform the result or error by applying a function to it.  Also, passing something that *might be a result or might be an error* to `alwaysCleanup` can be a source of hazards without *also* telling `alwaysCleanup` what kind of thing it is receiving. The fact that `finally` doesn't have a "parameter", like `catch` means that the burden is on the developer to grant access to the result or error, usually by storing it in a local variable before execution enters the `finally`. That approach will work for these promise-based approaches as well.
+
+[^finally-squelch-error]: Note that `finally` *is* allowed to squelch exceptions by *explicitly* returning a value.  However, in this case, we are not returning anything explicitly.  I've never seen a realistic and useful case for squelching an exception that way.
