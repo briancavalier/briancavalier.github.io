@@ -4,7 +4,7 @@
   <title><![CDATA[Category: javascript | Brian Cavalier]]></title>
   <link href="http://briancavalier.github.io/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://briancavalier.github.io/"/>
-  <updated>2013-05-07T12:20:06-04:00</updated>
+  <updated>2013-05-08T07:45:57-04:00</updated>
   <id>http://briancavalier.github.io/</id>
   <author>
     <name><![CDATA[Brian Cavalier]]></name>
@@ -18,7 +18,7 @@
     <link href="http://briancavalier.github.io/async-programming-part-3-finally/"/>
     <updated>2013-05-03T07:44:00-04:00</updated>
     <id>http://briancavalier.github.io/async-programming-part-3-finally</id>
-    <content type="html"><![CDATA[<p>As we saw in <a href="async-programming-part-1-it-s-messy">Part 1</a>, error handling in callback-based asynchronous code gets messy quickly, and loses many of the qualities of synchronous code that make it familiar and easier to reason about.  In <a href="async-programming-part-2-promises">Part 2</a>, we introduced Promises and saw how they restore call-and-return semantics, allow errors to propagate up the stack similarly to synchronous exceptions, and generally provide a cleaner approach to managing asynchrony, especially when handling errors.</p>
+    <content type="html"><![CDATA[<p>As we saw in <a href="/async-programming-part-1-it-s-messy">Part 1</a>, error handling in callback-based asynchronous code gets messy quickly, and loses many of the qualities of synchronous code that make it familiar and easier to reason about.  In <a href="/async-programming-part-2-promises">Part 2</a>, we introduced Promises and saw how they restore call-and-return semantics, allow errors to propagate up the stack similarly to synchronous exceptions, and generally provide a cleaner approach to managing asynchrony, especially when handling errors.</p>
 
 <h2>Try/catch/finally</h2>
 
