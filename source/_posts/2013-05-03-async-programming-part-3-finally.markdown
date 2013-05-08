@@ -7,7 +7,7 @@ categories:
 - javascript
 - promises
 ---
-As we saw in [Part 1](async-programming-part-1-it-s-messy), error handling in callback-based asynchronous code gets messy quickly, and loses many of the qualities of synchronous code that make it familiar and easier to reason about.  In [Part 2](async-programming-part-2-promises), we introduced Promises and saw how they restore call-and-return semantics, allow errors to propagate up the stack similarly to synchronous exceptions, and generally provide a cleaner approach to managing asynchrony, especially when handling errors.
+As we saw in [Part 1](/async-programming-part-1-it-s-messy), error handling in callback-based asynchronous code gets messy quickly, and loses many of the qualities of synchronous code that make it familiar and easier to reason about.  In [Part 2](/async-programming-part-2-promises), we introduced Promises and saw how they restore call-and-return semantics, allow errors to propagate up the stack similarly to synchronous exceptions, and generally provide a cleaner approach to managing asynchrony, especially when handling errors.
 
 ## Try/catch/finally
 
